@@ -2,6 +2,7 @@ import java.util.Objects;
 import java.util.Scanner;
 import java.util.ArrayList;
 import java.util.List;
+
 public class Rocky {
     public static void main(String[] args) {
         String banner = " ____             _          \n"
@@ -42,25 +43,13 @@ public class Rocky {
                 continue;
             }
 
-            //Parse the user input to know which task to mark
             if (userInput.equals("mark") || userInput.startsWith("mark ")) {
-                String taskNumberText = userInput.substring("mark".length()).trim();
+                updateTaskStatus(userInput, "mark", true, statements, isDone, divider);
+                continue;
+            }
 
-                try {
-                    int taskNumber = Integer.parseInt(taskNumberText);
-                    int taskIndex = taskNumber - 1;
-                    if (taskIndex >= 0 && taskIndex < statements.size()) {
-                        isDone.set(taskIndex, true);
-                        System.out.println(divider);
-                        System.out.println("Nice! Rocky marked this task as done:");
-                        System.out.println("[X] " + statements.get(taskIndex));
-                        System.out.println(divider);
-                    } else {
-                        System.out.println("Rocky cannot find that task number.");
-                    }
-                } catch (NumberFormatException e) {
-                    System.out.println("Please provide a task number, for example: mark 2");
-                }
+            if (userInput.equals("unmark") || userInput.startsWith("unmark ")) {
+                updateTaskStatus(userInput, "unmark", false, statements, isDone, divider);
                 continue;
             }
             System.out.println(divider);
@@ -71,5 +60,29 @@ public class Rocky {
         }
         System.out.println("Bye. We meet again soon!");
         System.out.println(divider);
+    }
+
+    private static void updateTaskStatus(String userInput, String command, boolean completed,
+                                         List<String> statements, List<Boolean> isDone, String divider) {
+        String taskNumberText = userInput.substring(command.length()).trim();
+
+        try {
+            int taskNumber = Integer.parseInt(taskNumberText);
+            int taskIndex = taskNumber - 1;
+            if (taskIndex >= 0 && taskIndex < statements.size()) {
+                isDone.set(taskIndex, completed);
+                String status = completed ? "[X]" : "[ ]";
+                String message = completed ? "Nice! Rocky marked this task as done:"
+                        : "Oh No! Rocky marked this task as not done yet:";
+                System.out.println(divider);
+                System.out.println(message);
+                System.out.println(status + " " + statements.get(taskIndex));
+                System.out.println(divider);
+            } else {
+                System.out.println("Rocky cannot find that task number.");
+            }
+        } catch (NumberFormatException e) {
+            System.out.println("Please provide a task number, for example: " + command + " 2");
+        }
     }
 }
