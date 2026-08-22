@@ -58,18 +58,48 @@ public class Rocky {
                 continue;
             }
             if (userInput.equals("todo") || userInput.startsWith("todo ")) {
-                addTask(new Todo(userInput.substring("todo".length()).trim()), tasks, divider);
+                String description = userInput.substring("todo".length()).trim();
+
+                if (description.isEmpty()) {
+                    System.out.println(divider);
+                    System.out.println("Curious? Rocky don't see description for the task...");
+                    System.out.println(divider);
+                } else {
+                    addTask(new Todo(description), tasks, divider);
+                }
                 continue;
             }
             if (userInput.equals("deadline") || userInput.startsWith("deadline ")) {
-                addDeadline(userInput, tasks, divider);
+                String description = userInput.substring("deadline".length()).trim();
+
+                if (description.isEmpty()) {
+                    System.out.println(divider);
+                    System.out.println("Curious? Rocky don't see description for the task...");
+                    System.out.println(divider);
+                }
+                else {
+                    addDeadline(userInput, tasks, divider);
+                }
                 continue;
             }
             if (userInput.equals("event") || userInput.startsWith("event ")) {
-                addEvent(userInput, tasks, divider);
+                String description = userInput.substring("event".length()).trim();
+
+                if (description.isEmpty()) {
+                    System.out.println(divider);
+                    System.out.println("Curious? Rocky don't see description for the task...");
+                    System.out.println(divider);
+                }
+                else {
+                    addEvent(userInput, tasks, divider);
+                }
                 continue;
             }
-            addTask(new Todo(userInput), tasks, divider);
+            else{
+                System.out.println(divider);
+                System.out.println("Rocky don't understand what this is... Try something else");
+                System.out.println(divider);
+            }
         }
         System.out.println("Bye. We meet again soon!");
         System.out.println(divider);
