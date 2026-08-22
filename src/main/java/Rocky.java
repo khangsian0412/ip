@@ -20,10 +20,7 @@ public class Rocky {
         System.out.println(divider);
         Scanner scanner = new Scanner(System.in);
 
-        //To keep track of the status of each tasks
-
-        List<String> statements = new ArrayList<>();
-        List<Boolean> isDone = new ArrayList<>();
+        List<Task> tasks = new ArrayList<>();
         while (scanner.hasNextLine()) {
             String userInput = scanner.nextLine().trim();
             if (Objects.equals(userInput, "bye")) {
@@ -31,12 +28,11 @@ public class Rocky {
             }
             if (Objects.equals(userInput, "list")) {
                 System.out.println(divider);
-                if (statements.isEmpty()) {
+                if (tasks.isEmpty()) {
                     System.out.println("Rocky don't see anything!");
                 } else {
-                    for (int i = 0; i < statements.size(); i++) {
-                        String status = isDone.get(i) ? "[X]" : "[ ]";
-                        System.out.println((i + 1) + ". " + status + " " + statements.get(i));
+                    for (int i = 0; i < tasks.size(); i++) {
+                        System.out.println((i + 1) + ". " + tasks.get(i));
                     }
                 }
                 System.out.println(divider);
@@ -44,39 +40,42 @@ public class Rocky {
             }
 
             if (userInput.equals("mark") || userInput.startsWith("mark ")) {
-                updateTaskStatus(userInput, "mark", true, statements, isDone, divider);
+                updateTaskStatus(userInput, "mark", true, tasks, divider);
                 continue;
             }
 
             if (userInput.equals("unmark") || userInput.startsWith("unmark ")) {
-                updateTaskStatus(userInput, "unmark", false, statements, isDone, divider);
+                updateTaskStatus(userInput, "unmark", false, tasks, divider);
                 continue;
             }
             System.out.println(divider);
             System.out.println("added: " + userInput + ", but what it mean?");
-            statements.add(userInput);
-            isDone.add(false);
+            tasks.add(new Task(userInput));
             System.out.println(divider);
         }
         System.out.println("Bye. We meet again soon!");
         System.out.println(divider);
     }
-
+    
     private static void updateTaskStatus(String userInput, String command, boolean completed,
-                                         List<String> statements, List<Boolean> isDone, String divider) {
+                                         List<Task> tasks, String divider) {
         String taskNumberText = userInput.substring(command.length()).trim();
 
         try {
             int taskNumber = Integer.parseInt(taskNumberText);
             int taskIndex = taskNumber - 1;
-            if (taskIndex >= 0 && taskIndex < statements.size()) {
-                isDone.set(taskIndex, completed);
-                String status = completed ? "[X]" : "[ ]";
+            if (taskIndex >= 0 && taskIndex < tasks.size()) {
+                Task task = tasks.get(taskIndex);
+                if (completed) {
+                    task.markAsDone();
+                } else {
+                    task.markAsNotDone();
+                }
                 String message = completed ? "Nice! Rocky marked this task as done:"
                         : "Oh No! Rocky marked this task as not done yet:";
                 System.out.println(divider);
                 System.out.println(message);
-                System.out.println(status + " " + statements.get(taskIndex));
+                System.out.println(task);
                 System.out.println(divider);
             } else {
                 System.out.println("Rocky cannot find that task number.");
