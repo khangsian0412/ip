@@ -57,6 +57,10 @@ public class Rocky {
                 updateTaskStatus(userInput, "unmark", false, tasks, divider);
                 continue;
             }
+            if (userInput.equals("delete") || userInput.startsWith("delete ")) {
+                deleteTask(userInput, tasks, divider);
+                continue;
+            }
             if (userInput.equals("todo") || userInput.startsWith("todo ")) {
                 String description = userInput.substring("todo".length()).trim();
 
@@ -130,6 +134,27 @@ public class Rocky {
             }
         } catch (NumberFormatException e) {
             System.out.println("Please provide a task number, for example: " + command + " 2");
+        }
+    }
+
+    private static void deleteTask(String userInput, List<Task> tasks, String divider) {
+        String taskNumberText = userInput.substring("delete".length()).trim();
+        try {
+            int taskNumber = Integer.parseInt(taskNumberText);
+            int taskIndex = taskNumber - 1;
+            if (taskIndex >= 0 && taskIndex < tasks.size()) {
+                Task task = tasks.get(taskIndex);
+                String message = "Rocky will remove that annoying task for you!:";
+                System.out.println(divider);
+                System.out.println(message);
+                System.out.println(task);
+                System.out.println(divider);
+                tasks.remove(tasks.get(taskIndex));
+            }else {
+                System.out.println("Rocky cannot find that task number.");
+            }
+        } catch (NumberFormatException e) {
+            System.out.println("Please provide a task number, for example: delete 2");
         }
     }
 
