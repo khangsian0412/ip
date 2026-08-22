@@ -1,9 +1,17 @@
-import java.util.Objects;
-import java.util.Scanner;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Scanner;
 
+/**
+ * A chatbot that stores and manages different types of tasks.
+ */
 public class Rocky {
+    /**
+     * Starts the chatbot and processes the user's task commands.
+     *
+     * @param args command-line arguments, which this program does not use
+     */
     public static void main(String[] args) {
         String banner = " ____             _          \n"
                 + "|  _ \\ ___   ___| | ___   _ \n"
@@ -27,6 +35,7 @@ public class Rocky {
                 break;
             }
             if (Objects.equals(userInput, "list")) {
+                System.out.println("Rocky remember you have these tasks");
                 System.out.println(divider);
                 if (tasks.isEmpty()) {
                     System.out.println("Rocky don't see anything!");
@@ -48,15 +57,24 @@ public class Rocky {
                 updateTaskStatus(userInput, "unmark", false, tasks, divider);
                 continue;
             }
-            System.out.println(divider);
-            System.out.println("added: " + userInput + ", but what it mean?");
-            tasks.add(new Task(userInput));
-            System.out.println(divider);
+            if (userInput.equals("todo") || userInput.startsWith("todo ")) {
+                addTask(new Todo(userInput.substring("todo".length()).trim()), tasks, divider);
+                continue;
+            }
+            if (userInput.equals("deadline") || userInput.startsWith("deadline ")) {
+                addDeadline(userInput, tasks, divider);
+                continue;
+            }
+            if (userInput.equals("event") || userInput.startsWith("event ")) {
+                addEvent(userInput, tasks, divider);
+                continue;
+            }
+            addTask(new Todo(userInput), tasks, divider);
         }
         System.out.println("Bye. We meet again soon!");
         System.out.println(divider);
     }
-    
+
     private static void updateTaskStatus(String userInput, String command, boolean completed,
                                          List<Task> tasks, String divider) {
         String taskNumberText = userInput.substring(command.length()).trim();
@@ -83,5 +101,38 @@ public class Rocky {
         } catch (NumberFormatException e) {
             System.out.println("Please provide a task number, for example: " + command + " 2");
         }
+    }
+
+    private static void addTask(Task task, List<Task> tasks, String divider) {
+        tasks.add(task);
+        System.out.println(divider);
+        System.out.println("Amaze! Rocky add this to task...:");
+        System.out.println(task);
+        System.out.println("Rocky see " + tasks.size() + " tasks in the list.");
+        System.out.println(divider);
+    }
+
+    private static void addDeadline(String userInput, List<Task> tasks, String divider) {
+        int byIndex = userInput.indexOf(" /by ");
+        if (byIndex < 0) {
+            System.out.println("Use: deadline DESCRIPTION /by DATE_OR_TIME");
+            return;
+        }
+        String description = userInput.substring("deadline".length(), byIndex).trim();
+        String by = userInput.substring(byIndex + " /by ".length()).trim();
+        addTask(new Deadline(description, by), tasks, divider);
+    }
+
+    private static void addEvent(String userInput, List<Task> tasks, String divider) {
+        int fromIndex = userInput.indexOf(" /from ");
+        int toIndex = userInput.indexOf(" /to ");
+        if (fromIndex < 0 || toIndex < 0 || toIndex < fromIndex) {
+            System.out.println("Use: event DESCRIPTION /from START /to END");
+            return;
+        }
+        String description = userInput.substring("event".length(), fromIndex).trim();
+        String from = userInput.substring(fromIndex + " /from ".length(), toIndex).trim();
+        String to = userInput.substring(toIndex + " /to ".length()).trim();
+        addTask(new Event(description, from, to), tasks, divider);
     }
 }

@@ -1,38 +1,48 @@
 /**
- * Represents one task and whether it has been completed.
+ * Represents the common state and behavior of all task types.
  */
-public class Task {
+public abstract class Task {
     private final String description;
     private boolean isDone;
 
-    public Task(String description) {
+    /**
+     * Creates an incomplete task with the given description.
+     *
+     * @param description the text describing the task
+     */
+    protected Task(String description) {
         this.description = description;
         this.isDone = false;
     }
 
-    public String getDescription() {
+    /**
+     * Returns this task's description for subclasses that format the task.
+     *
+     * @return the task description
+     */
+    protected String getDescription() {
         return description;
     }
 
-
-    public String getStatusIcon() {
+    /**
+     * Returns the icon representing this task's completion status.
+     *
+     * @return {@code "X"} when the task is done, otherwise a space
+     */
+    protected String getStatusIcon() {
         return isDone ? "X" : " ";
     }
 
     /**
-     * Returns this task's status icon and description for display.
-     *
-     * @return the formatted task description
+     * Marks this task as completed.
      */
-    @Override
-    public String toString() {
-        return "[" + getStatusIcon() + "] " + description;
-    }
-
     public void markAsDone() {
         isDone = true;
     }
 
+    /**
+     * Marks this task as not completed.
+     */
     public void markAsNotDone() {
         isDone = false;
     }

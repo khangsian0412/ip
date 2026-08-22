@@ -1,11 +1,13 @@
 # UI Test Plan
 
-## Add, complete, and list a task
-**Aim:** Verify that Rocky stores a task, marks it as done, and shows its completed status in the list.
+## Add, complete, and list different task types
+**Aim:** Verify that Rocky creates to-do, deadline, and event tasks, marks a task as done, and displays each task through its type-specific format.
 
 **Input:**
 ```text
-read book
+todo read book
+deadline return book /by Sunday
+event project meeting /from Mon 2pm /to 4pm
 mark 1
 list
 bye
@@ -25,14 +27,28 @@ Hello! I Rocky.
 Amaze, what a special human being! What rocky do for you?
 ____________________________________________________________
 ____________________________________________________________
-added: read book, but what it mean?
+Got it. I've added this task:
+[T][ ] read book
+Now you have 1 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+Got it. I've added this task:
+[D][ ] return book (by: Sunday)
+Now you have 2 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+Got it. I've added this task:
+[E][ ] project meeting (from: Mon 2pm to: 4pm)
+Now you have 3 tasks in the list.
 ____________________________________________________________
 ____________________________________________________________
 Nice! Rocky marked this task as done:
-[X] read book
+[T][X] read book
 ____________________________________________________________
 ____________________________________________________________
-1. [X] read book
+1. [T][X] read book
+2. [D][ ] return book (by: Sunday)
+3. [E][ ] project meeting (from: Mon 2pm to: 4pm)
 ____________________________________________________________
 Bye. We meet again soon!
 ____________________________________________________________
