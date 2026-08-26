@@ -1,11 +1,10 @@
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Scanner;
 
-/**
- * A chatbot that stores and manages different types of tasks.
- */
 public class Rocky {
     /**
      * Starts the chatbot and processes the user's task commands.
@@ -123,6 +122,7 @@ public class Rocky {
                 } else {
                     task.markAsNotDone();
                 }
+                saveTasks(tasks);
                 String message = completed ? "Nice! Rocky marked this task as done:"
                         : "Oh No! Rocky marked this task as not done yet:";
                 System.out.println(divider);
@@ -165,6 +165,7 @@ public class Rocky {
         System.out.println(task);
         System.out.println("Rocky see " + tasks.size() + " tasks in the list.");
         System.out.println(divider);
+        saveTasks(tasks);
     }
 
     private static void addDeadline(String userInput, List<Task> tasks, String divider) {
@@ -176,6 +177,7 @@ public class Rocky {
         String description = userInput.substring("deadline".length(), byIndex).trim();
         String by = userInput.substring(byIndex + " /by ".length()).trim();
         addTask(new Deadline(description, by), tasks, divider);
+        saveTasks(tasks);
     }
 
     private static void addEvent(String userInput, List<Task> tasks, String divider) {
@@ -189,5 +191,18 @@ public class Rocky {
         String from = userInput.substring(fromIndex + " /from ".length(), toIndex).trim();
         String to = userInput.substring(toIndex + " /to ".length()).trim();
         addTask(new Event(description, from, to), tasks, divider);
+        saveTasks(tasks);
+    }
+
+    private static void saveTasks(List<Task> tasks) {
+        try {
+            FileWriter fw = new FileWriter("./data/rocky.txt");
+            for (Task task : tasks) {
+                fw.write(task.toString() + System.lineSeparator());
+            }
+            fw.close();
+        } catch (IOException e) {
+            System.out.println("Rocky cannot save to the file...: " + e.getMessage());
+        }
     }
 }
