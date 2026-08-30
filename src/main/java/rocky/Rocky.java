@@ -9,7 +9,7 @@ import rocky.ui.Ui;
 public class Rocky {
     private static final Storage STORAGE = new Storage("./data/rocky.txt");
 
-    /** Creates a Rocky application entry point. */
+    /** Creates the Rocky application entry point. */
     public Rocky() {
     }
 
@@ -87,7 +87,7 @@ public class Rocky {
                 ui.showTaskDeleted(task);
                 tasks.delete(taskIndex);
                 STORAGE.save(tasks.asList());
-            }else {
+            } else {
                 ui.showTaskNotFound();
             }
         } catch (NumberFormatException e) {
@@ -95,7 +95,7 @@ public class Rocky {
         }
     }
 
-    /** Adds a task to the task list, displays confirmation, and persists the change. */
+    /** Adds a task, displays confirmation, and persists the updated task list. */
     private static void addTask(Task task, TaskList tasks, Ui ui) {
         tasks.add(task);
         ui.showTaskAdded(task, tasks.size());

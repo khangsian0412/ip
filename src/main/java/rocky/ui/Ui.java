@@ -33,7 +33,7 @@ public class Ui {
 
     /** Returns whether another console command is available.
      *
-     * @return {@code true} when another line can be read
+     * @return {@code true} when another line can be read.
      */
     public boolean hasNextLine() {
         return scanner.hasNextLine();
@@ -41,7 +41,7 @@ public class Ui {
 
     /** Reads the next console command.
      *
-     * @return the next line entered by the user
+     * @return the next line entered by the user.
      */
     public String readLine() {
         return scanner.nextLine();
@@ -49,7 +49,7 @@ public class Ui {
 
     /** Displays the current task list.
      *
-     * @param tasks the task list to display
+     * @param tasks the task list to display.
      */
     public void showTasks(TaskList tasks) {
         System.out.println("Rocky remember you have these tasks");
@@ -66,8 +66,8 @@ public class Ui {
 
     /** Displays feedback after a task is added.
      *
-     * @param task the newly added task
-     * @param taskCount the number of tasks after the addition
+     * @param task the newly added task.
+     * @param taskCount the number of tasks after the addition.
      */
     public void showTaskAdded(Task task, int taskCount) {
         showDivider();
@@ -79,8 +79,8 @@ public class Ui {
 
     /** Displays feedback after a task is marked or unmarked.
      *
-     * @param task the task whose status changed
-     * @param completed whether the task is now complete
+     * @param task the task whose status changed.
+     * @param completed whether the task is now complete.
      */
     public void showTaskStatus(Task task, boolean completed) {
         showDivider();
@@ -92,7 +92,7 @@ public class Ui {
 
     /** Displays feedback before deleting a task.
      *
-     * @param task the task about to be deleted
+     * @param task the task about to be deleted.
      */
     public void showTaskDeleted(Task task) {
         showDivider();
@@ -103,7 +103,7 @@ public class Ui {
 
     /** Displays an invalid task-number message.
      *
-     * @param command the command whose task number was invalid
+     * @param command the command whose task number was invalid.
      */
     public void showInvalidTaskNumber(String command) {
         System.out.println("Please provide a task number, for example: " + command + " 2");
@@ -116,7 +116,7 @@ public class Ui {
 
     /** Displays a parser error using the appropriate divider style.
      *
-     * @param command the parsed command containing the error message
+     * @param command the parsed command containing the error message.
      */
     public void showError(Parser.Command command) {
         if (command.showWithDivider()) showDivider();

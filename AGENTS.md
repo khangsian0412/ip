@@ -39,8 +39,14 @@ After every code update:
 
 Maintain JUnit tests for approximately the top 50% of the codebase's highest-value methods, prioritizing complex, core, and critical business logic. Update or add the relevant JUnit tests after every code change so that the coverage target remains satisfied.
 
+## Java coding standard
+
+All Java source and test code must follow the project-specific `seedu-java-coding-standard` skill, based on the [SE-EDU basic and intermediate Java coding standard](https://se-education.org/guides/conventions/java/intermediate.html). Review touched Java files against that standard after every code change.
+
 ## Git
 
 Use lightweight tags unless the user requests an annotated tag.
 When proposing or creating a commit message, include enough detail to explain the rationale for the change.
 Do not commit or push unless explicitly asked.
+
+All branch names and commit messages must follow the project-specific `seedu-git-standard` skill, based on the [SE-EDU Git conventions](https://se-education.org/guides/conventions/git.html). Apply these rules to every future commit: use meaningful kebab-case branch names; write imperative, capitalized, period-free subjects no longer than 72 characters; and include a 72-column-wrapped body explaining what changed and why for non-trivial commits.
