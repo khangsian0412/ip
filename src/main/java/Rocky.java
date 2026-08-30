@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Scanner;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
@@ -185,12 +186,14 @@ public class Rocky {
         }
         String description = userInput.substring("deadline".length(), byIndex).trim();
         String by = userInput.substring(byIndex + " /by ".length()).trim();
-        LocalDate byDate = parseDate(by);
+        ParsedDateTime byDate = parseDateTime(by);
         if (byDate == null) {
-            System.out.println("Use a date in yyyy-MM-dd format, for example: 2019-10-15");
+            printDateFormatError();
             return;
         }
-        addTask(new Deadline(description, byDate), tasks, divider);
+        addTask(byDate.hasTime
+                ? new Deadline(description, byDate.value)
+                : new Deadline(description, byDate.value.toLocalDate()), tasks, divider);
     }
 
     private static void addEvent(String userInput, List<Task> tasks, String divider) {
@@ -203,13 +206,20 @@ public class Rocky {
         String description = userInput.substring("event".length(), fromIndex).trim();
         String from = userInput.substring(fromIndex + " /from ".length(), toIndex).trim();
         String to = userInput.substring(toIndex + " /to ".length()).trim();
-        LocalDate fromDate = parseDate(from);
-        LocalDate toDate = parseDate(to);
+        ParsedDateTime fromDate = parseDateTime(from);
+        ParsedDateTime toDate = parseDateTime(to);
         if (fromDate == null || toDate == null) {
-            System.out.println("Use dates in yyyy-MM-dd format, for example: 2019-10-15");
+            printDateFormatError();
             return;
         }
-        addTask(new Event(description, fromDate, toDate), tasks, divider);
+        if (fromDate.hasTime != toDate.hasTime) {
+            System.out.println("Use the same date or date-time format for both event dates.");
+            return;
+        }
+        addTask(fromDate.hasTime
+                ? new Event(description, fromDate.value, toDate.value)
+                : new Event(description, fromDate.value.toLocalDate(), toDate.value.toLocalDate()),
+                tasks, divider);
     }
 
     private static void saveTasks(List<Task> tasks) {
@@ -308,18 +318,25 @@ public class Rocky {
             if (type.equals("T") && fields.length == 3) {
                 task = new Todo(fields[2]);
             } else if (type.equals("D") && fields.length == 4) {
-                LocalDate byDate = parseDate(fields[3]);
+                ParsedDateTime byDate = parseDateTime(fields[3]);
                 if (byDate == null) {
                     return null;
                 }
-                task = new Deadline(fields[2], byDate);
+                task = byDate.hasTime
+                        ? new Deadline(fields[2], byDate.value)
+                        : new Deadline(fields[2], byDate.value.toLocalDate());
             } else if (type.equals("E") && fields.length == 5) {
-                LocalDate fromDate = parseDate(fields[3]);
-                LocalDate toDate = parseDate(fields[4]);
+                ParsedDateTime fromDate = parseDateTime(fields[3]);
+                ParsedDateTime toDate = parseDateTime(fields[4]);
                 if (fromDate == null || toDate == null) {
                     return null;
                 }
-                task = new Event(fields[2], fromDate, toDate);
+                if (fromDate.hasTime != toDate.hasTime) {
+                    return null;
+                }
+                task = fromDate.hasTime
+                        ? new Event(fields[2], fromDate.value, toDate.value)
+                        : new Event(fields[2], fromDate.value.toLocalDate(), toDate.value.toLocalDate());
             } else {
                 return null;
             }
@@ -343,11 +360,34 @@ public class Rocky {
      * @param text the user-provided date
      * @return the parsed date, or {@code null} when the text is invalid
      */
-    private static LocalDate parseDate(String text) {
+    private static ParsedDateTime parseDateTime(String text) {
         try {
-            return LocalDate.parse(text, INPUT_DATE_FORMAT);
+            if (text.contains("T")) {
+                return new ParsedDateTime(LocalDateTime.parse(text), true);
+            }
+            if (text.contains(" ")) {
+                DateTimeFormatter inputTimeFormat = DateTimeFormatter.ofPattern("uuuu-MM-dd HHmm");
+                return new ParsedDateTime(LocalDateTime.parse(text, inputTimeFormat), true);
+            }
+            return new ParsedDateTime(LocalDate.parse(text, INPUT_DATE_FORMAT).atStartOfDay(), false);
         } catch (DateTimeParseException e) {
             return null;
+        }
+    }
+
+    /** Prints the supported date and date-time input formats. */
+    private static void printDateFormatError() {
+        System.out.println("Use yyyy-MM-dd or yyyy-MM-dd HHmm, for example: 2019-10-15 or 2019-12-02 1800");
+    }
+
+    /** Holds a parsed date and whether the original input included a time. */
+    private static class ParsedDateTime {
+        private final LocalDateTime value;
+        private final boolean hasTime;
+
+        ParsedDateTime(LocalDateTime value, boolean hasTime) {
+            this.value = value;
+            this.hasTime = hasTime;
         }
     }
 }

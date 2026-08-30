@@ -1,4 +1,5 @@
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
@@ -8,8 +9,11 @@ import java.util.Locale;
 public class Event extends Task {
     private static final DateTimeFormatter DISPLAY_FORMAT =
             DateTimeFormatter.ofPattern("MMM dd yyyy", Locale.ENGLISH);
-    private final LocalDate from;
-    private final LocalDate to;
+    private static final DateTimeFormatter DISPLAY_TIME_FORMAT =
+            DateTimeFormatter.ofPattern("MMM dd yyyy, h:mma", Locale.ENGLISH);
+    private final LocalDateTime from;
+    private final LocalDateTime to;
+    private final boolean hasTime;
 
     /**
      * Creates an event task with a description, start-time text, and end-time text.
@@ -20,8 +24,23 @@ public class Event extends Task {
      */
     public Event(String description, LocalDate from, LocalDate to) {
         super(description);
+        this.from = from.atStartOfDay();
+        this.to = to.atStartOfDay();
+        this.hasTime = false;
+    }
+
+    /**
+     * Creates an event with start and end dates and times.
+     *
+     * @param description the text describing the event
+     * @param from the date and time at which the event starts
+     * @param to the date and time at which the event ends
+     */
+    public Event(String description, LocalDateTime from, LocalDateTime to) {
+        super(description);
         this.from = from;
         this.to = to;
+        this.hasTime = true;
     }
 
     /**
@@ -31,9 +50,10 @@ public class Event extends Task {
      */
     @Override
     public String toString() {
+        DateTimeFormatter format = hasTime ? DISPLAY_TIME_FORMAT : DISPLAY_FORMAT;
         return "[E][" + getStatusIcon() + "] " + getDescription()
-                + " (from: " + from.format(DISPLAY_FORMAT)
-                + " to: " + to.format(DISPLAY_FORMAT) + ")";
+                + " (from: " + from.format(format)
+                + " to: " + to.format(format) + ")";
     }
 
     /**
@@ -43,7 +63,9 @@ public class Event extends Task {
      */
     @Override
     public String toStorageString() {
+        String storedFrom = hasTime ? from.toString() : from.toLocalDate().toString();
+        String storedTo = hasTime ? to.toString() : to.toLocalDate().toString();
         return "E | " + getStatusValue() + " | " + getDescription()
-                + " | " + from + " | " + to;
+                + " | " + storedFrom + " | " + storedTo;
     }
 }

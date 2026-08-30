@@ -1,4 +1,5 @@
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
@@ -8,7 +9,10 @@ import java.util.Locale;
 public class Deadline extends Task {
     private static final DateTimeFormatter DISPLAY_FORMAT =
             DateTimeFormatter.ofPattern("MMM dd yyyy", Locale.ENGLISH);
-    private final LocalDate by;
+    private static final DateTimeFormatter DISPLAY_TIME_FORMAT =
+            DateTimeFormatter.ofPattern("MMM dd yyyy, h:mma", Locale.ENGLISH);
+    private final LocalDateTime by;
+    private final boolean hasTime;
 
     /**
      * Creates a deadline task with a description and due-time text.
@@ -18,7 +22,20 @@ public class Deadline extends Task {
      */
     public Deadline(String description, LocalDate by) {
         super(description);
+        this.by = by.atStartOfDay();
+        this.hasTime = false;
+    }
+
+    /**
+     * Creates a deadline with a date and time.
+     *
+     * @param description the text describing the task
+     * @param by the date and time by which the task is due
+     */
+    public Deadline(String description, LocalDateTime by) {
+        super(description);
         this.by = by;
+        this.hasTime = true;
     }
 
     /**
@@ -28,8 +45,9 @@ public class Deadline extends Task {
      */
     @Override
     public String toString() {
+        DateTimeFormatter format = hasTime ? DISPLAY_TIME_FORMAT : DISPLAY_FORMAT;
         return "[D][" + getStatusIcon() + "] " + getDescription()
-                + " (by: " + by.format(DISPLAY_FORMAT) + ")";
+                + " (by: " + by.format(format) + ")";
     }
 
     /**
@@ -39,6 +57,7 @@ public class Deadline extends Task {
      */
     @Override
     public String toStorageString() {
-        return "D | " + getStatusValue() + " | " + getDescription() + " | " + by;
+        String storedDate = hasTime ? by.toString() : by.toLocalDate().toString();
+        return "D | " + getStatusValue() + " | " + getDescription() + " | " + storedDate;
     }
 }
