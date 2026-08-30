@@ -33,6 +33,9 @@ public class Rocky {
             case LIST:
                 ui.showTasks(tasks);
                 break;
+            case FIND:
+                ui.showMatchingTasks(tasks.find(command.getArgument()));
+                break;
             case MARK:
                 updateTaskStatus(command.getArgument(), "mark", true, tasks, ui);
                 break;

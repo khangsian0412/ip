@@ -35,7 +35,10 @@ public class Parser {
         /** Reports an invalid command. */
         ERROR,
         /** Reports a command with no task description. */
-        MISSING_DESCRIPTION
+        MISSING_DESCRIPTION,
+
+        /** Find based on task description**/
+        FIND
     }
 
     /** A parsed command and the data needed to execute it. */
@@ -101,11 +104,15 @@ public class Parser {
      */
     public Command parse(String userInput) {
         String input = userInput.trim();
-        if (input.equals("bye")) {
-            return command(CommandType.BYE);
+        if (input.equals("bye")) return command(CommandType.BYE);
+        if (input.equals("list")) return command(CommandType.LIST);
+        if (input.equals("find")) {
+            return error("Use: find KEYWORD", false);
         }
-        if (input.equals("list")) {
-            return command(CommandType.LIST);
+        if (input.startsWith("find ")) {
+            String keyword = input.substring("find".length()).trim();
+            return keyword.isEmpty() ? error("Use: find KEYWORD", false)
+                    : command(CommandType.FIND, keyword);
         }
         if (input.equals("mark") || input.startsWith("mark ")) {
             return command(CommandType.MARK, input.substring("mark".length()).trim());

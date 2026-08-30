@@ -175,3 +175,34 @@ ____________________________________________________________
 Bye. We meet again soon!
 ____________________________________________________________
 ```
+
+## Find matching tasks
+**Aim:** Verify that Rocky finds tasks whose descriptions contain a keyword and displays only the matching tasks.
+
+**Input:**
+```text
+find book
+bye
+```
+
+**Expected output:**
+```text
+____________________________________________________________
+ ____             _          
+|  _ \ ___   ___| | ___   _ 
+| |_) / _ \ / __| |/ / | | |
+|  _ < (_) | (__|   <| |_| |
+|_| \_\___/ \___|_|\_\__, |
+                         |___/
+
+Hello! I Rocky.
+Amaze, what a special human being! What rocky do for you?
+____________________________________________________________
+____________________________________________________________
+Here are the matching tasks in your list:
+1. [T][X] read book
+2. [D][ ] return book (by: Dec 02 2019, 6:00PM)
+____________________________________________________________
+Bye. We meet again soon!
+____________________________________________________________
+```
