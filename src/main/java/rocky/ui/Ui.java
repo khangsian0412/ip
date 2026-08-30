@@ -1,5 +1,6 @@
 package rocky.ui;
 
+import java.util.List;
 import java.util.Scanner;
 
 import rocky.TaskList;
@@ -50,6 +51,23 @@ public class Ui {
         } else {
             for (int i = 0; i < tasks.size(); i++) {
                 System.out.println((i + 1) + ". " + tasks.get(i));
+            }
+        }
+        showDivider();
+    }
+
+    /** Displays tasks whose descriptions match a search keyword.
+     *
+     * @param matchingTasks the tasks returned by a search.
+     */
+    public void showMatchingTasks(List<Task> matchingTasks) {
+        showDivider();
+        System.out.println("Here are the matching tasks in your list:");
+        if (matchingTasks.isEmpty()) {
+            System.out.println("Rocky don't see any matching tasks!");
+        } else {
+            for (int i = 0; i < matchingTasks.size(); i++) {
+                System.out.println((i + 1) + ". " + matchingTasks.get(i));
             }
         }
         showDivider();

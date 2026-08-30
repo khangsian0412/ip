@@ -1,5 +1,7 @@
 package rocky.task;
 
+import java.util.Locale;
+
 /**
  * Represents the common state and behavior of all task types.
  */
@@ -24,6 +26,16 @@ public abstract class Task {
      */
     protected String getDescription() {
         return description;
+    }
+
+    /** Returns whether this task description contains a keyword.
+     *
+     * @param keyword the case-insensitive text to search for.
+     * @return {@code true} when the description contains the keyword.
+     */
+    public boolean matchesKeyword(String keyword) {
+        return keyword != null && description.toLowerCase(Locale.ROOT)
+                .contains(keyword.toLowerCase(Locale.ROOT));
     }
 
     /**

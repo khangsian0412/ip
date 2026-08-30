@@ -43,6 +43,23 @@ class ParserTest {
     }
 
     @Test
+    void parseFindCommand_returnsFindCommandWithKeyword() {
+        Parser.Command command = parser.parse("find book");
+
+        assertEquals(Parser.CommandType.FIND, command.getType());
+        assertEquals("book", command.getArgument());
+    }
+
+    @Test
+    void parseFindWithoutKeyword_returnsUsageError() {
+        Parser.Command command = parser.parse("find");
+
+        assertEquals(Parser.CommandType.ERROR, command.getType());
+        assertEquals("Use: find KEYWORD", command.getMessage());
+        assertFalse(command.showWithDivider());
+    }
+
+    @Test
     void parseTodoCommand_createsTodoWithDescription() {
         Parser.Command command = parser.parse("todo read book");
 

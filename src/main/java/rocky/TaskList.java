@@ -50,4 +50,22 @@ TaskList {
     public List<Task> asList() {
         return Collections.unmodifiableList(tasks);
     }
+
+    /** Returns tasks whose descriptions contain the supplied keyword.
+     *
+     * @param keyword the case-insensitive text to search for.
+     * @return the matching tasks in their original order.
+     */
+    public List<Task> find(String keyword) {
+        if (keyword == null || keyword.isBlank()) {
+            return List.of();
+        }
+        List<Task> matchingTasks = new ArrayList<>();
+        for (Task task : tasks) {
+            if (task.matchesKeyword(keyword)) {
+                matchingTasks.add(task);
+            }
+        }
+        return matchingTasks;
+    }
 }

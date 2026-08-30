@@ -16,7 +16,7 @@ public class Parser {
 
     /** The command categories understood by Rocky. */
     public enum CommandType {
-        BYE, LIST, MARK, UNMARK, DELETE, ADD, ERROR, MISSING_DESCRIPTION
+        BYE, LIST, FIND, MARK, UNMARK, DELETE, ADD, ERROR, MISSING_DESCRIPTION
     }
 
     /** A parsed command and the data needed to execute it. */
@@ -52,6 +52,14 @@ public class Parser {
         String input = userInput.trim();
         if (input.equals("bye")) return command(CommandType.BYE);
         if (input.equals("list")) return command(CommandType.LIST);
+        if (input.equals("find")) {
+            return error("Use: find KEYWORD", false);
+        }
+        if (input.startsWith("find ")) {
+            String keyword = input.substring("find".length()).trim();
+            return keyword.isEmpty() ? error("Use: find KEYWORD", false)
+                    : command(CommandType.FIND, keyword);
+        }
         if (input.equals("mark") || input.startsWith("mark ")) {
             return command(CommandType.MARK, input.substring("mark".length()).trim());
         }
