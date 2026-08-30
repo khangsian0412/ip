@@ -1,5 +1,3 @@
-import java.util.Scanner;
-
 public class Rocky {
     private static final Storage STORAGE = new Storage("./data/rocky.txt");
     /**
@@ -8,57 +6,43 @@ public class Rocky {
      * @param args command-line arguments, which this program does not use
      */
     public static void main(String[] args) {
-        String banner = " ____             _          \n"
-                + "|  _ \\ ___   ___| | ___   _ \n"
-                + "| |_) / _ \\ / __| |/ / | | |\n"
-                + "|  _ < (_) | (__|   <| |_| |\n"
-                + "|_| \\_\\___/ \\___|_|\\_\\__, |\n"
-                + "                         |___/\n";
-        String divider = "____________________________________________________________";
-
-        System.out.println(divider);
-        System.out.println(banner);
-        System.out.println("Hello! I Rocky.");
-        System.out.println("Amaze, what a special human being! What rocky do for you?");
-        System.out.println(divider);
-        Scanner scanner = new Scanner(System.in);
+        Ui ui = new Ui();
+        ui.showWelcome();
 
         TaskList tasks = new TaskList(STORAGE.load());
         Parser parser = new Parser();
-        while (scanner.hasNextLine()) {
-            Parser.Command command = parser.parse(scanner.nextLine());
+        while (ui.hasNextLine()) {
+            Parser.Command command = parser.parse(ui.readLine());
             switch (command.getType()) {
             case BYE:
-                System.out.println("Bye. We meet again soon!");
-                System.out.println(divider);
+                ui.showBye();
                 return;
             case LIST:
-                listTasks(tasks, divider);
+                ui.showTasks(tasks);
                 break;
             case MARK:
-                updateTaskStatus(command.getArgument(), "mark", true, tasks, divider);
+                updateTaskStatus(command.getArgument(), "mark", true, tasks, ui);
                 break;
             case UNMARK:
-                updateTaskStatus(command.getArgument(), "unmark", false, tasks, divider);
+                updateTaskStatus(command.getArgument(), "unmark", false, tasks, ui);
                 break;
             case DELETE:
-                deleteTask(command.getArgument(), tasks, divider);
+                deleteTask(command.getArgument(), tasks, ui);
                 break;
             case ADD:
-                addTask(command.getTask(), tasks, divider);
+                addTask(command.getTask(), tasks, ui);
                 break;
             case MISSING_DESCRIPTION:
             case ERROR:
-                showError(command, divider);
+                ui.showError(command);
                 break;
             }
         }
-        System.out.println("Bye. We meet again soon!");
-        System.out.println(divider);
+        ui.showBye();
     }
 
     private static void updateTaskStatus(String taskNumberText, String command, boolean completed,
-                                         TaskList tasks, String divider) {
+                                         TaskList tasks, Ui ui) {
         try {
             int taskNumber = Integer.parseInt(taskNumberText);
             int taskIndex = taskNumber - 1;
@@ -70,71 +54,35 @@ public class Rocky {
                     task.markAsNotDone();
                 }
                 STORAGE.save(tasks.asList());
-                String message = completed ? "Nice! Rocky marked this task as done:"
-                        : "Oh No! Rocky marked this task as not done yet:";
-                System.out.println(divider);
-                System.out.println(message);
-                System.out.println(task);
-                System.out.println(divider);
+                ui.showTaskStatus(task, completed);
             } else {
-                System.out.println("Rocky cannot find that task number.");
+                ui.showTaskNotFound();
             }
         } catch (NumberFormatException e) {
-            System.out.println("Please provide a task number, for example: " + command + " 2");
+            ui.showInvalidTaskNumber(command);
         }
     }
 
-    private static void listTasks(TaskList tasks, String divider) {
-        System.out.println("Rocky remember you have these tasks");
-        System.out.println(divider);
-        if (tasks.isEmpty()) {
-            System.out.println("Rocky don't see anything!");
-        } else {
-            for (int i = 0; i < tasks.size(); i++) {
-                System.out.println((i + 1) + ". " + tasks.get(i));
-            }
-        }
-        System.out.println(divider);
-    }
-
-    private static void showError(Parser.Command command, String divider) {
-        if (command.showWithDivider()) {
-            System.out.println(divider);
-        }
-        System.out.println(command.getMessage());
-        if (command.showWithDivider()) {
-            System.out.println(divider);
-        }
-    }
-
-    private static void deleteTask(String taskNumberText, TaskList tasks, String divider) {
+    private static void deleteTask(String taskNumberText, TaskList tasks, Ui ui) {
         try {
             int taskNumber = Integer.parseInt(taskNumberText);
             int taskIndex = taskNumber - 1;
             if (taskIndex >= 0 && taskIndex < tasks.size()) {
                 Task task = tasks.get(taskIndex);
-                String message = "Rocky will remove that annoying task for you!:";
-                System.out.println(divider);
-                System.out.println(message);
-                System.out.println(task);
-                System.out.println(divider);
+                ui.showTaskDeleted(task);
                 tasks.delete(taskIndex);
                 STORAGE.save(tasks.asList());
             }else {
-                System.out.println("Rocky cannot find that task number.");
+                ui.showTaskNotFound();
             }
         } catch (NumberFormatException e) {
-            System.out.println("Please provide a task number, for example: delete 2");
+            ui.showInvalidTaskNumber("delete");
         }
     }
 
-    private static void addTask(Task task, TaskList tasks, String divider) {
+    private static void addTask(Task task, TaskList tasks, Ui ui) {
         tasks.add(task);
-        System.out.println(divider);
-        System.out.println("Amaze! Rocky add this to task...:");
-        System.out.println(task);
-        System.out.println("Rocky see " + tasks.size() + " tasks in the list.");
-        System.out.println(divider);
+        ui.showTaskAdded(task, tasks.size());
         STORAGE.save(tasks.asList());
     }
 
