@@ -1,4 +1,3 @@
-import java.util.List;
 import java.util.Objects;
 import java.util.Scanner;
 import java.time.LocalDate;
@@ -30,7 +29,7 @@ public class Rocky {
         System.out.println(divider);
         Scanner scanner = new Scanner(System.in);
 
-        List<Task> tasks = STORAGE.load();
+        TaskList tasks = new TaskList(STORAGE.load());
         while (scanner.hasNextLine()) {
             String userInput = scanner.nextLine().trim();
             if (Objects.equals(userInput, "bye")) {
@@ -112,7 +111,7 @@ public class Rocky {
     }
 
     private static void updateTaskStatus(String userInput, String command, boolean completed,
-                                         List<Task> tasks, String divider) {
+                                         TaskList tasks, String divider) {
         String taskNumberText = userInput.substring(command.length()).trim();
 
         try {
@@ -125,7 +124,7 @@ public class Rocky {
                 } else {
                     task.markAsNotDone();
                 }
-                STORAGE.save(tasks);
+                STORAGE.save(tasks.asList());
                 String message = completed ? "Nice! Rocky marked this task as done:"
                         : "Oh No! Rocky marked this task as not done yet:";
                 System.out.println(divider);
@@ -140,7 +139,7 @@ public class Rocky {
         }
     }
 
-    private static void deleteTask(String userInput, List<Task> tasks, String divider) {
+    private static void deleteTask(String userInput, TaskList tasks, String divider) {
         String taskNumberText = userInput.substring("delete".length()).trim();
         try {
             int taskNumber = Integer.parseInt(taskNumberText);
@@ -152,8 +151,8 @@ public class Rocky {
                 System.out.println(message);
                 System.out.println(task);
                 System.out.println(divider);
-                tasks.remove(tasks.get(taskIndex));
-                STORAGE.save(tasks);
+                tasks.delete(taskIndex);
+                STORAGE.save(tasks.asList());
             }else {
                 System.out.println("Rocky cannot find that task number.");
             }
@@ -162,17 +161,17 @@ public class Rocky {
         }
     }
 
-    private static void addTask(Task task, List<Task> tasks, String divider) {
+    private static void addTask(Task task, TaskList tasks, String divider) {
         tasks.add(task);
         System.out.println(divider);
         System.out.println("Amaze! Rocky add this to task...:");
         System.out.println(task);
         System.out.println("Rocky see " + tasks.size() + " tasks in the list.");
         System.out.println(divider);
-        STORAGE.save(tasks);
+        STORAGE.save(tasks.asList());
     }
 
-    private static void addDeadline(String userInput, List<Task> tasks, String divider) {
+    private static void addDeadline(String userInput, TaskList tasks, String divider) {
         int byIndex = userInput.indexOf(" /by ");
         if (byIndex < 0) {
             System.out.println("Use: deadline DESCRIPTION /by DATE_OR_TIME");
@@ -190,7 +189,7 @@ public class Rocky {
                 : new Deadline(description, byDate.value.toLocalDate()), tasks, divider);
     }
 
-    private static void addEvent(String userInput, List<Task> tasks, String divider) {
+    private static void addEvent(String userInput, TaskList tasks, String divider) {
         int fromIndex = userInput.indexOf(" /from ");
         int toIndex = userInput.indexOf(" /to ");
         if (fromIndex < 0 || toIndex < 0 || toIndex < fromIndex) {
