@@ -1,6 +1,8 @@
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.AtomicMoveNotSupportedException;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -196,15 +198,35 @@ public class Rocky {
     }
 
     private static void saveTasks(List<Task> tasks) {
+        Path temporaryFile = null;
         try {
-            Files.createDirectories(TASK_FILE.getParent());
+            Path parent = TASK_FILE.getParent();
+            if (parent != null) {
+                Files.createDirectories(parent);
+            }
             StringBuilder fileContents = new StringBuilder();
             for (Task task : tasks) {
                 fileContents.append(task.toStorageString()).append(System.lineSeparator());
             }
-            Files.writeString(TASK_FILE, fileContents.toString());
-        } catch (IOException e) {
+            Path directory = parent == null ? Path.of(".") : parent;
+            temporaryFile = Files.createTempFile(directory, "rocky", ".tmp");
+            Files.writeString(temporaryFile, fileContents.toString());
+            try {
+                Files.move(temporaryFile, TASK_FILE, StandardCopyOption.ATOMIC_MOVE,
+                        StandardCopyOption.REPLACE_EXISTING);
+            } catch (AtomicMoveNotSupportedException e) {
+                Files.move(temporaryFile, TASK_FILE, StandardCopyOption.REPLACE_EXISTING);
+            }
+        } catch (IOException | SecurityException e) {
             System.out.println("Rocky cannot save to the file...: " + e.getMessage());
+        } finally {
+            if (temporaryFile != null) {
+                try {
+                    Files.deleteIfExists(temporaryFile);
+                } catch (IOException | SecurityException ignored) {
+                    // The original save error, if any, is more useful to the user.
+                }
+            }
         }
     }
 
@@ -215,7 +237,16 @@ public class Rocky {
      */
     private static List<Task> loadTasks() {
         List<Task> tasks = new ArrayList<>();
-        if (!Files.exists(TASK_FILE)) {
+        try {
+            if (Files.notExists(TASK_FILE)) {
+                return tasks;
+            }
+            if (!Files.isRegularFile(TASK_FILE) || !Files.isReadable(TASK_FILE)) {
+                System.out.println("Rocky cannot load the task file because it is not a readable file.");
+                return tasks;
+            }
+        } catch (SecurityException e) {
+            System.out.println("Rocky cannot check the task file...: " + e.getMessage());
             return tasks;
         }
 
@@ -226,7 +257,7 @@ public class Rocky {
                     tasks.add(task);
                 }
             }
-        } catch (IOException e) {
+        } catch (IOException | SecurityException e) {
             System.out.println("Rocky cannot load from the file...: " + e.getMessage());
         }
         return tasks;
@@ -239,8 +270,19 @@ public class Rocky {
      * @return the reconstructed task, or {@code null} for an invalid line
      */
     private static Task parseTask(String line) {
+        if (line == null || line.isBlank()) {
+            return null;
+        }
+
         String[] fields = line.split("\\s*\\|\\s*", -1);
+        for (int i = 0; i < fields.length; i++) {
+            fields[i] = fields[i].trim();
+        }
+
         try {
+            if (fields.length < 2 || fields[0].isEmpty() || fields[1].isEmpty()) {
+                return null;
+            }
             String type = fields[0];
             boolean isDone = fields[1].equals("1");
             if (!fields[1].equals("0") && !fields[1].equals("1")) {
@@ -257,11 +299,16 @@ public class Rocky {
             } else {
                 return null;
             }
+            for (int i = 2; i < fields.length; i++) {
+                if (fields[i].isEmpty()) {
+                    return null;
+                }
+            }
             if (isDone) {
                 task.markAsDone();
             }
             return task;
-        } catch (ArrayIndexOutOfBoundsException e) {
+        } catch (RuntimeException e) {
             return null;
         }
     }
