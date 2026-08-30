@@ -28,4 +28,15 @@ public class Event extends Task {
         return "[E][" + getStatusIcon() + "] " + getDescription()
                 + " (from: " + from + " to: " + to + ")";
     }
+
+    /**
+     * Returns the type, status, description, and times in the task file format.
+     *
+     * @return the storage representation of this event
+     */
+    @Override
+    public String toStorageString() {
+        return "E | " + getStatusValue() + " | " + getDescription()
+                + " | " + from + " | " + to;
+    }
 }

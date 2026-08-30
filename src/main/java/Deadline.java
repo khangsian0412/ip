@@ -24,4 +24,14 @@ public class Deadline extends Task {
     public String toString() {
         return "[D][" + getStatusIcon() + "] " + getDescription() + " (by: " + by + ")";
     }
+
+    /**
+     * Returns the type, status, description, and due time in the task file format.
+     *
+     * @return the storage representation of this deadline
+     */
+    @Override
+    public String toStorageString() {
+        return "D | " + getStatusValue() + " | " + getDescription() + " | " + by;
+    }
 }

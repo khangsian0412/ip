@@ -34,6 +34,22 @@ public abstract class Task {
     }
 
     /**
+     * Returns this task's completion status in the persistence format.
+     *
+     * @return {@code "1"} when done, otherwise {@code "0"}
+     */
+    protected String getStatusValue() {
+        return isDone ? "1" : "0";
+    }
+
+    /**
+     * Returns a line that can be written to disk and parsed later.
+     *
+     * @return the task's storage representation
+     */
+    public abstract String toStorageString();
+
+    /**
      * Marks this task as completed.
      */
     public void markAsDone() {

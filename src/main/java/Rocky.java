@@ -1,11 +1,13 @@
-import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Scanner;
 
 public class Rocky {
+    private static final Path TASK_FILE = Path.of("./data/rocky.txt");
     /**
      * Starts the chatbot and processes the user's task commands.
      *
@@ -150,6 +152,7 @@ public class Rocky {
                 System.out.println(task);
                 System.out.println(divider);
                 tasks.remove(tasks.get(taskIndex));
+                saveTasks(tasks);
             }else {
                 System.out.println("Rocky cannot find that task number.");
             }
@@ -177,7 +180,6 @@ public class Rocky {
         String description = userInput.substring("deadline".length(), byIndex).trim();
         String by = userInput.substring(byIndex + " /by ".length()).trim();
         addTask(new Deadline(description, by), tasks, divider);
-        saveTasks(tasks);
     }
 
     private static void addEvent(String userInput, List<Task> tasks, String divider) {
@@ -191,16 +193,16 @@ public class Rocky {
         String from = userInput.substring(fromIndex + " /from ".length(), toIndex).trim();
         String to = userInput.substring(toIndex + " /to ".length()).trim();
         addTask(new Event(description, from, to), tasks, divider);
-        saveTasks(tasks);
     }
 
     private static void saveTasks(List<Task> tasks) {
         try {
-            FileWriter fw = new FileWriter("./data/rocky.txt");
+            Files.createDirectories(TASK_FILE.getParent());
+            StringBuilder fileContents = new StringBuilder();
             for (Task task : tasks) {
-                fw.write(task.toString() + System.lineSeparator());
+                fileContents.append(task.toStorageString()).append(System.lineSeparator());
             }
-            fw.close();
+            Files.writeString(TASK_FILE, fileContents.toString());
         } catch (IOException e) {
             System.out.println("Rocky cannot save to the file...: " + e.getMessage());
         }

@@ -20,4 +20,14 @@ public class Todo extends Task {
     public String toString() {
         return "[T][" + getStatusIcon() + "] " + getDescription();
     }
+
+    /**
+     * Returns the type, status, and description in the task file format.
+     *
+     * @return the storage representation of this to-do
+     */
+    @Override
+    public String toStorageString() {
+        return "T | " + getStatusValue() + " | " + getDescription();
+    }
 }
