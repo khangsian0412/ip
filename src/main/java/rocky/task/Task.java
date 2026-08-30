@@ -1,3 +1,5 @@
+package rocky.task;
+
 /**
  * Represents the common state and behavior of all task types.
  */

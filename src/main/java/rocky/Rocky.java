@@ -1,3 +1,10 @@
+package rocky;
+
+import rocky.parser.Parser;
+import rocky.storage.Storage;
+import rocky.task.Task;
+import rocky.ui.Ui;
+
 public class Rocky {
     private static final Storage STORAGE = new Storage("./data/rocky.txt");
     /**

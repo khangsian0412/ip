@@ -1,4 +1,10 @@
+package rocky.ui;
+
 import java.util.Scanner;
+
+import rocky.TaskList;
+import rocky.parser.Parser;
+import rocky.task.Task;
 
 /** Handles Rocky's console input and output. */
 public class Ui {
