@@ -1,9 +1,3 @@
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.AtomicMoveNotSupportedException;
-import java.nio.file.StandardCopyOption;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Scanner;
@@ -13,7 +7,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
 public class Rocky {
-    private static final Path TASK_FILE = Path.of("./data/rocky.txt");
+    private static final Storage STORAGE = new Storage("./data/rocky.txt");
     private static final DateTimeFormatter INPUT_DATE_FORMAT = DateTimeFormatter.ISO_LOCAL_DATE;
     /**
      * Starts the chatbot and processes the user's task commands.
@@ -36,7 +30,7 @@ public class Rocky {
         System.out.println(divider);
         Scanner scanner = new Scanner(System.in);
 
-        List<Task> tasks = loadTasks();
+        List<Task> tasks = STORAGE.load();
         while (scanner.hasNextLine()) {
             String userInput = scanner.nextLine().trim();
             if (Objects.equals(userInput, "bye")) {
@@ -131,7 +125,7 @@ public class Rocky {
                 } else {
                     task.markAsNotDone();
                 }
-                saveTasks(tasks);
+                STORAGE.save(tasks);
                 String message = completed ? "Nice! Rocky marked this task as done:"
                         : "Oh No! Rocky marked this task as not done yet:";
                 System.out.println(divider);
@@ -159,7 +153,7 @@ public class Rocky {
                 System.out.println(task);
                 System.out.println(divider);
                 tasks.remove(tasks.get(taskIndex));
-                saveTasks(tasks);
+                STORAGE.save(tasks);
             }else {
                 System.out.println("Rocky cannot find that task number.");
             }
@@ -175,7 +169,7 @@ public class Rocky {
         System.out.println(task);
         System.out.println("Rocky see " + tasks.size() + " tasks in the list.");
         System.out.println(divider);
-        saveTasks(tasks);
+        STORAGE.save(tasks);
     }
 
     private static void addDeadline(String userInput, List<Task> tasks, String divider) {
@@ -220,138 +214,6 @@ public class Rocky {
                 ? new Event(description, fromDate.value, toDate.value)
                 : new Event(description, fromDate.value.toLocalDate(), toDate.value.toLocalDate()),
                 tasks, divider);
-    }
-
-    private static void saveTasks(List<Task> tasks) {
-        Path temporaryFile = null;
-        try {
-            Path parent = TASK_FILE.getParent();
-            if (parent != null) {
-                Files.createDirectories(parent);
-            }
-            StringBuilder fileContents = new StringBuilder();
-            for (Task task : tasks) {
-                fileContents.append(task.toStorageString()).append(System.lineSeparator());
-            }
-            Path directory = parent == null ? Path.of(".") : parent;
-            temporaryFile = Files.createTempFile(directory, "rocky", ".tmp");
-            Files.writeString(temporaryFile, fileContents.toString());
-            try {
-                Files.move(temporaryFile, TASK_FILE, StandardCopyOption.ATOMIC_MOVE,
-                        StandardCopyOption.REPLACE_EXISTING);
-            } catch (AtomicMoveNotSupportedException e) {
-                Files.move(temporaryFile, TASK_FILE, StandardCopyOption.REPLACE_EXISTING);
-            }
-        } catch (IOException | SecurityException e) {
-            System.out.println("Rocky cannot save to the file...: " + e.getMessage());
-        } finally {
-            if (temporaryFile != null) {
-                try {
-                    Files.deleteIfExists(temporaryFile);
-                } catch (IOException | SecurityException ignored) {
-                    // The original save error, if any, is more useful to the user.
-                }
-            }
-        }
-    }
-
-    /**
-     * Loads saved tasks when the chatbot starts.
-     *
-     * @return the tasks read from disk, or an empty list when no file exists
-     */
-    private static List<Task> loadTasks() {
-        List<Task> tasks = new ArrayList<>();
-        try {
-            if (Files.notExists(TASK_FILE)) {
-                return tasks;
-            }
-            if (!Files.isRegularFile(TASK_FILE) || !Files.isReadable(TASK_FILE)) {
-                System.out.println("Rocky cannot load the task file because it is not a readable file.");
-                return tasks;
-            }
-        } catch (SecurityException e) {
-            System.out.println("Rocky cannot check the task file...: " + e.getMessage());
-            return tasks;
-        }
-
-        try {
-            for (String line : Files.readAllLines(TASK_FILE)) {
-                Task task = parseTask(line);
-                if (task != null) {
-                    tasks.add(task);
-                }
-            }
-        } catch (IOException | SecurityException e) {
-            System.out.println("Rocky cannot load from the file...: " + e.getMessage());
-        }
-        return tasks;
-    }
-
-    /**
-     * Converts one stored line into a task.
-     *
-     * @param line one line from the task file
-     * @return the reconstructed task, or {@code null} for an invalid line
-     */
-    private static Task parseTask(String line) {
-        if (line == null || line.isBlank()) {
-            return null;
-        }
-
-        String[] fields = line.split("\\s*\\|\\s*", -1);
-        for (int i = 0; i < fields.length; i++) {
-            fields[i] = fields[i].trim();
-        }
-
-        try {
-            if (fields.length < 2 || fields[0].isEmpty() || fields[1].isEmpty()) {
-                return null;
-            }
-            String type = fields[0];
-            boolean isDone = fields[1].equals("1");
-            if (!fields[1].equals("0") && !fields[1].equals("1")) {
-                return null;
-            }
-
-            Task task;
-            if (type.equals("T") && fields.length == 3) {
-                task = new Todo(fields[2]);
-            } else if (type.equals("D") && fields.length == 4) {
-                ParsedDateTime byDate = parseDateTime(fields[3]);
-                if (byDate == null) {
-                    return null;
-                }
-                task = byDate.hasTime
-                        ? new Deadline(fields[2], byDate.value)
-                        : new Deadline(fields[2], byDate.value.toLocalDate());
-            } else if (type.equals("E") && fields.length == 5) {
-                ParsedDateTime fromDate = parseDateTime(fields[3]);
-                ParsedDateTime toDate = parseDateTime(fields[4]);
-                if (fromDate == null || toDate == null) {
-                    return null;
-                }
-                if (fromDate.hasTime != toDate.hasTime) {
-                    return null;
-                }
-                task = fromDate.hasTime
-                        ? new Event(fields[2], fromDate.value, toDate.value)
-                        : new Event(fields[2], fromDate.value.toLocalDate(), toDate.value.toLocalDate());
-            } else {
-                return null;
-            }
-            for (int i = 2; i < fields.length; i++) {
-                if (fields[i].isEmpty()) {
-                    return null;
-                }
-            }
-            if (isDone) {
-                task.markAsDone();
-            }
-            return task;
-        } catch (RuntimeException e) {
-            return null;
-        }
     }
 
     /**
