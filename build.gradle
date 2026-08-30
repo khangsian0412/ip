@@ -48,7 +48,11 @@ jar {
 }
 
 shadowJar {
-    archiveFileName = 'duke.jar'
+    // Produce one runnable artifact containing the application and its runtime dependencies.
+    archiveFileName = 'rocky-all.jar'
+    manifest {
+        attributes 'Main-Class': 'rocky.Rocky'
+    }
 }
 
 run {
