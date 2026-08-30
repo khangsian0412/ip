@@ -35,6 +35,10 @@ After every code update:
 1. Review `test/ui-test-plan.md` and update it when the change affects a recorded command, its expected output, or requires a new test case.
 2. Invoke the project-specific `test-ui` skill to run the UI test plan. Report any failure, including the expected and actual output shown by the skill.
 
+## JUnit test coverage
+
+Maintain JUnit tests for approximately the top 50% of the codebase's highest-value methods, prioritizing complex, core, and critical business logic. Update or add the relevant JUnit tests after every code change so that the coverage target remains satisfied.
+
 ## Git
 
 Use lightweight tags unless the user requests an annotated tag.
