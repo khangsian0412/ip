@@ -23,6 +23,7 @@ class StorageTest {
     @TempDir
     Path temporaryDirectory;
 
+    /** Verifies that every supported task type survives a save/load round trip. */
     @Test
     void saveAndLoad_roundTripsAllTaskTypesAndCompletionStatus() throws Exception {
         Path taskFile = temporaryDirectory.resolve("nested/data/rocky.txt");
@@ -53,6 +54,7 @@ class StorageTest {
                         + " to: Dec 06 2019, 8:00PM)", loaded.get(4).toString());
     }
 
+    /** Verifies that loading a missing task file returns an empty list. */
     @Test
     void load_whenFileDoesNotExist_returnsEmptyList() {
         Storage storage = new Storage(temporaryDirectory.resolve("missing.txt").toString());
@@ -60,6 +62,7 @@ class StorageTest {
         assertTrue(storage.load().isEmpty());
     }
 
+    /** Verifies that saving no tasks still creates an empty task file. */
     @Test
     void save_emptyTaskList_createsEmptyFile() throws Exception {
         Path taskFile = temporaryDirectory.resolve("empty/rocky.txt");
@@ -71,6 +74,7 @@ class StorageTest {
         assertEquals("", Files.readString(taskFile));
     }
 
+    /** Verifies that malformed and unsupported records are skipped during loading. */
     @Test
     void load_ignoresBlankMalformedAndUnsupportedRecords() throws Exception {
         Path taskFile = temporaryDirectory.resolve("rocky.txt");
@@ -93,6 +97,7 @@ class StorageTest {
         assertEquals("[T][ ] another valid task", loaded.get(1).toString());
     }
 
+    /** Verifies that a later save replaces stale task-file contents. */
     @Test
     void save_replacesExistingContents() throws Exception {
         Path taskFile = temporaryDirectory.resolve("rocky.txt");

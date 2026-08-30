@@ -13,6 +13,7 @@ import rocky.task.Todo;
 
 /** Tests the core collection operations provided by {@link TaskList}. */
 class TaskListTest {
+    /** Verifies that a newly created list starts empty. */
     @Test
     void emptyList_reportsNoTasks() {
         TaskList tasks = new TaskList();
@@ -21,6 +22,7 @@ class TaskListTest {
         assertEquals(0, tasks.size());
     }
 
+    /** Verifies that adding, retrieving, and deleting preserve task order. */
     @Test
     void addGetAndDelete_maintainTaskOrder() {
         Task first = new Todo("first");
@@ -40,6 +42,7 @@ class TaskListTest {
         assertEquals(second, tasks.get(0));
     }
 
+    /** Verifies that constructing a task list copies the supplied collection. */
     @Test
     void constructor_copiesSuppliedList() {
         List<Task> original = List.of(new Todo("saved task"));
@@ -49,6 +52,7 @@ class TaskListTest {
         assertEquals("[T][ ] saved task", tasks.get(0).toString());
     }
 
+    /** Verifies that callers cannot modify the list through its persistence view. */
     @Test
     void asList_doesNotAllowExternalModification() {
         TaskList tasks = new TaskList();

@@ -14,9 +14,28 @@ import rocky.task.Todo;
 public class Parser {
     private static final DateTimeFormatter INPUT_DATE_FORMAT = DateTimeFormatter.ISO_LOCAL_DATE;
 
+    /** Creates a parser for Rocky commands. */
+    public Parser() {
+    }
+
     /** The command categories understood by Rocky. */
     public enum CommandType {
-        BYE, LIST, MARK, UNMARK, DELETE, ADD, ERROR, MISSING_DESCRIPTION
+        /** Exits the application. */
+        BYE,
+        /** Displays all tasks. */
+        LIST,
+        /** Marks a task as complete. */
+        MARK,
+        /** Marks a task as incomplete. */
+        UNMARK,
+        /** Deletes a task. */
+        DELETE,
+        /** Adds a task. */
+        ADD,
+        /** Reports an invalid command. */
+        ERROR,
+        /** Reports a command with no task description. */
+        MISSING_DESCRIPTION
     }
 
     /** A parsed command and the data needed to execute it. */
@@ -27,6 +46,14 @@ public class Parser {
         private final String message;
         private final boolean showWithDivider;
 
+        /** Creates a parsed command with all of its optional data.
+         *
+         * @param type the command category
+         * @param argument the command argument, if present
+         * @param task the task to add, if present
+         * @param message the user-facing message, if present
+         * @param showWithDivider whether the message should be surrounded by dividers
+         */
         private Command(CommandType type, String argument, Task task,
                         String message, boolean showWithDivider) {
             this.type = type;
@@ -36,18 +63,42 @@ public class Parser {
             this.showWithDivider = showWithDivider;
         }
 
+        /** Returns the category of this parsed command.
+         *
+         * @return the command category
+         */
         public CommandType getType() { return type; }
 
+        /** Returns the numeric or textual argument supplied with this command.
+         *
+         * @return the command argument, or {@code null} when there is none
+         */
         public String getArgument() { return argument; }
 
+        /** Returns the task created by this command.
+         *
+         * @return the created task, or {@code null} when this command does not add a task
+         */
         public Task getTask() { return task; }
 
+        /** Returns the user-facing message associated with this command.
+         *
+         * @return the command message, or {@code null} when there is none
+         */
         public String getMessage() { return message; }
 
+        /** Returns whether the message should be printed between UI dividers.
+         *
+         * @return {@code true} when dividers should surround the message
+         */
         public boolean showWithDivider() { return showWithDivider; }
     }
 
-    /** Parses one line of user input. */
+    /** Parses one line of user input.
+     *
+     * @param userInput the command entered by the user
+     * @return the parsed command and any associated data
+     */
     public Command parse(String userInput) {
         String input = userInput.trim();
         if (input.equals("bye")) return command(CommandType.BYE);
@@ -74,6 +125,11 @@ public class Parser {
         return error("Rocky don't understand what this is... Try something else", true);
     }
 
+    /** Parses a deadline command containing a due date or date-time.
+     *
+     * @param input the complete deadline command
+     * @return the parsed command
+     */
     private Command parseDeadline(String input) {
         int byIndex = input.indexOf(" /by ");
         if (byIndex < 0) return error("Use: deadline DESCRIPTION /by DATE_OR_TIME", false);
@@ -86,6 +142,7 @@ public class Parser {
         return add(task);
     }
 
+    /** Parses an event command containing start and end dates or date-times. */
     private Command parseEvent(String input) {
         int fromIndex = input.indexOf(" /from ");
         int toIndex = input.indexOf(" /to ");
@@ -105,6 +162,12 @@ public class Parser {
         return add(task);
     }
 
+    /** Parses a supported date or date-time string.
+     *
+     * @param text the date or date-time text
+     *
+     * @return the parsed value, or {@code null} when the input is invalid
+     */
     private ParsedDateTime parseDateTime(String text) {
         try {
             if (text.contains("T")) return new ParsedDateTime(LocalDateTime.parse(text), true);
@@ -118,27 +181,51 @@ public class Parser {
         }
     }
 
+    /** Creates a command without an argument, task, or message.
+     *
+     * @param type the command category
+     * @return the created command
+     */
     private Command command(CommandType type) {
         return new Command(type, null, null, null, false);
     }
 
+    /** Creates a command with a textual argument.
+     *
+     * @param type the command category
+     * @param argument the command argument
+     * @return the created command
+     */
     private Command command(CommandType type, String argument) {
         return new Command(type, argument, null, null, false);
     }
 
+    /** Creates a command that adds the supplied task.
+     *
+     * @param task the task to add
+     * @return the created command
+     */
     private Command add(Task task) {
         return new Command(CommandType.ADD, null, task, null, false);
     }
 
+    /** Creates the standard missing-description response. */
     private Command missingDescription() {
         return new Command(CommandType.MISSING_DESCRIPTION, null, null,
                 "Curious? Rocky don't see description for the task...", true);
     }
 
+    /** Creates the standard invalid-date response. */
     private Command dateError() {
         return error("Use yyyy-MM-dd or yyyy-MM-dd HHmm, for example: 2019-10-15 or 2019-12-02 1800", false);
     }
 
+    /** Creates an error command with the requested display behavior.
+     *
+     * @param message the user-facing error message
+     * @param showWithDivider whether the UI should surround the message with dividers
+     * @return the created error command
+     */
     private Command error(String message, boolean showWithDivider) {
         return new Command(CommandType.ERROR, null, null, message, showWithDivider);
     }
@@ -147,6 +234,11 @@ public class Parser {
         private final LocalDateTime value;
         private final boolean hasTime;
 
+        /** Creates a parsed date-time and records whether the input included a time.
+         *
+         * @param value the parsed date-time value
+         * @param hasTime whether the original input included a time
+         */
         ParsedDateTime(LocalDateTime value, boolean hasTime) {
             this.value = value;
             this.hasTime = hasTime;
