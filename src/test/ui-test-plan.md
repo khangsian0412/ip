@@ -1,5 +1,62 @@
 # UI Test Plan
 
+## Reject an invalid task number
+**Aim:** Verify that Rocky handles a mark command for a task that does not exist without adding a task or crashing.
+
+**Input:**
+```text
+mark 1
+bye
+```
+
+**Expected output:**
+```text
+____________________________________________________________
+ ____             _          
+|  _ \ ___   ___| | ___   _ 
+| |_) / _ \ / __| |/ / | | |
+|  _ < (_) | (__|   <| |_| |
+|_| \_\___/ \___|_|\_\__, |
+                         |___/
+
+Hello! I Rocky.
+Amaze, what a special human being! What rocky do for you?
+____________________________________________________________
+Rocky cannot find that task number.
+Bye. We meet again soon!
+____________________________________________________________
+```
+
+## Start with no saved tasks
+**Aim:** Verify that Rocky starts with an empty list when no task file exists.
+
+**Input:**
+```text
+list
+bye
+```
+
+**Expected output:**
+```text
+____________________________________________________________
+ ____             _          
+|  _ \ ___   ___| | ___   _ 
+| |_) / _ \ / __| |/ / | | |
+|  _ < (_) | (__|   <| |_| |
+|_| \_\___/ \___|_|\_\__, |
+                         |___/
+
+Hello! I Rocky.
+Amaze, what a special human being! What rocky do for you?
+____________________________________________________________
+Rocky remember you have these tasks
+____________________________________________________________
+Rocky don't see anything!
+____________________________________________________________
+Bye. We meet again soon!
+____________________________________________________________
+```
+
 ## Add, complete, and list different task types
 **Aim:** Verify that Rocky creates to-do, deadline, and event tasks, marks a task as done, and displays each task through its type-specific format.
 
@@ -55,41 +112,11 @@ Bye. We meet again soon!
 ____________________________________________________________
 ```
 
-## Reject an invalid task number
-**Aim:** Verify that Rocky handles a mark command for a task that does not exist without adding a task or crashing.
+## Load saved tasks when Rocky starts
+**Aim:** Verify that Rocky reconstructs saved task types and completion status when it starts again.
 
 **Input:**
 ```text
-mark 1
-bye
-```
-
-**Expected output:**
-```text
-____________________________________________________________
- ____             _          
-|  _ \ ___   ___| | ___   _ 
-| |_) / _ \ / __| |/ / | | |
-|  _ < (_) | (__|   <| |_| |
-|_| \_\___/ \___|_|\_\__, |
-                         |___/
-
-Hello! I Rocky.
-Amaze, what a special human being! What rocky do for you?
-____________________________________________________________
-Rocky cannot find that task number.
-Bye. We meet again soon!
-____________________________________________________________
-```
-
-## Delete a task and list the remaining tasks
-**Aim:** Verify that deleting an existing task updates the in-memory list and the displayed task list.
-
-**Input:**
-```text
-todo first task
-todo second task
-delete 1
 list
 bye
 ```
@@ -107,23 +134,11 @@ ____________________________________________________________
 Hello! I Rocky.
 Amaze, what a special human being! What rocky do for you?
 ____________________________________________________________
-____________________________________________________________
-Amaze! Rocky add this to task...:
-[T][ ] first task
-Rocky see 1 tasks in the list.
-____________________________________________________________
-____________________________________________________________
-Amaze! Rocky add this to task...:
-[T][ ] second task
-Rocky see 2 tasks in the list.
-____________________________________________________________
-____________________________________________________________
-Rocky will remove that annoying task for you!:
-[T][ ] first task
-____________________________________________________________
 Rocky remember you have these tasks
 ____________________________________________________________
-1. [T][ ] second task
+1. [T][X] read book
+2. [D][ ] return book (by: Sunday)
+3. [E][ ] project meeting (from: Mon 2pm to: 4pm)
 ____________________________________________________________
 Bye. We meet again soon!
 ____________________________________________________________

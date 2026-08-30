@@ -29,7 +29,7 @@ public class Rocky {
         System.out.println(divider);
         Scanner scanner = new Scanner(System.in);
 
-        List<Task> tasks = new ArrayList<>();
+        List<Task> tasks = loadTasks();
         while (scanner.hasNextLine()) {
             String userInput = scanner.nextLine().trim();
             if (Objects.equals(userInput, "bye")) {
@@ -205,6 +205,64 @@ public class Rocky {
             Files.writeString(TASK_FILE, fileContents.toString());
         } catch (IOException e) {
             System.out.println("Rocky cannot save to the file...: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Loads saved tasks when the chatbot starts.
+     *
+     * @return the tasks read from disk, or an empty list when no file exists
+     */
+    private static List<Task> loadTasks() {
+        List<Task> tasks = new ArrayList<>();
+        if (!Files.exists(TASK_FILE)) {
+            return tasks;
+        }
+
+        try {
+            for (String line : Files.readAllLines(TASK_FILE)) {
+                Task task = parseTask(line);
+                if (task != null) {
+                    tasks.add(task);
+                }
+            }
+        } catch (IOException e) {
+            System.out.println("Rocky cannot load from the file...: " + e.getMessage());
+        }
+        return tasks;
+    }
+
+    /**
+     * Converts one stored line into a task.
+     *
+     * @param line one line from the task file
+     * @return the reconstructed task, or {@code null} for an invalid line
+     */
+    private static Task parseTask(String line) {
+        String[] fields = line.split("\\s*\\|\\s*", -1);
+        try {
+            String type = fields[0];
+            boolean isDone = fields[1].equals("1");
+            if (!fields[1].equals("0") && !fields[1].equals("1")) {
+                return null;
+            }
+
+            Task task;
+            if (type.equals("T") && fields.length == 3) {
+                task = new Todo(fields[2]);
+            } else if (type.equals("D") && fields.length == 4) {
+                task = new Deadline(fields[2], fields[3]);
+            } else if (type.equals("E") && fields.length == 5) {
+                task = new Event(fields[2], fields[3], fields[4]);
+            } else {
+                return null;
+            }
+            if (isDone) {
+                task.markAsDone();
+            }
+            return task;
+        } catch (ArrayIndexOutOfBoundsException e) {
+            return null;
         }
     }
 }
