@@ -23,12 +23,18 @@ Storage {
     private static final DateTimeFormatter INPUT_DATE_FORMAT = DateTimeFormatter.ISO_LOCAL_DATE;
     private final Path taskFile;
 
-    /** Creates storage for the supplied task file path. */
+    /** Creates storage for the supplied task file path.
+     *
+     * @param filePath the path of the task file
+     */
     public Storage(String filePath) {
         this.taskFile = Path.of(filePath);
     }
 
-    /** Saves all tasks, creating the parent directory when necessary. */
+    /** Saves all tasks, creating the parent directory when necessary.
+     *
+     * @param tasks the tasks to persist
+     */
     public void save(List<Task> tasks) {
         Path temporaryFile = null;
         try {
@@ -62,7 +68,10 @@ Storage {
         }
     }
 
-    /** Loads valid tasks, returning an empty list when no readable file exists. */
+    /** Loads valid tasks, returning an empty list when no readable file exists.
+     *
+     * @return the valid tasks reconstructed from the task file
+     */
     public List<Task> load() {
         List<Task> tasks = new ArrayList<>();
         try {
@@ -85,6 +94,11 @@ Storage {
         return tasks;
     }
 
+    /** Reconstructs one task from its stored pipe-delimited representation.
+     *
+     * @param line the stored task line
+     * @return the reconstructed task, or {@code null} when the line is invalid
+     */
     private Task parseTask(String line) {
         if (line == null || line.isBlank()) {
             return null;
@@ -122,6 +136,11 @@ Storage {
         }
     }
 
+    /** Parses a stored date or date-time value into the internal representation.
+     *
+     * @param text the stored date or date-time text
+     * @return the parsed value, or {@code null} when the text is invalid
+     */
     private ParsedDateTime parseDateTime(String text) {
         try {
             if (text.contains("T")) return new ParsedDateTime(LocalDateTime.parse(text), true);
@@ -139,6 +158,11 @@ Storage {
         private final LocalDateTime value;
         private final boolean hasTime;
 
+        /** Creates a parsed date-time and records whether the input included a time.
+         *
+         * @param value the parsed date-time value
+         * @param hasTime whether the original input included a time
+         */
         ParsedDateTime(LocalDateTime value, boolean hasTime) {
             this.value = value;
             this.hasTime = hasTime;

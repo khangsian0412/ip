@@ -31,17 +31,26 @@ public class Ui {
         showDivider();
     }
 
-    /** Returns whether another console command is available. */
+    /** Returns whether another console command is available.
+     *
+     * @return {@code true} when another line can be read
+     */
     public boolean hasNextLine() {
         return scanner.hasNextLine();
     }
 
-    /** Reads the next console command. */
+    /** Reads the next console command.
+     *
+     * @return the next line entered by the user
+     */
     public String readLine() {
         return scanner.nextLine();
     }
 
-    /** Displays the current task list. */
+    /** Displays the current task list.
+     *
+     * @param tasks the task list to display
+     */
     public void showTasks(TaskList tasks) {
         System.out.println("Rocky remember you have these tasks");
         showDivider();
@@ -55,7 +64,11 @@ public class Ui {
         showDivider();
     }
 
-    /** Displays feedback after a task is added. */
+    /** Displays feedback after a task is added.
+     *
+     * @param task the newly added task
+     * @param taskCount the number of tasks after the addition
+     */
     public void showTaskAdded(Task task, int taskCount) {
         showDivider();
         System.out.println("Amaze! Rocky add this to task...:");
@@ -64,7 +77,11 @@ public class Ui {
         showDivider();
     }
 
-    /** Displays feedback after a task is marked or unmarked. */
+    /** Displays feedback after a task is marked or unmarked.
+     *
+     * @param task the task whose status changed
+     * @param completed whether the task is now complete
+     */
     public void showTaskStatus(Task task, boolean completed) {
         showDivider();
         System.out.println(completed ? "Nice! Rocky marked this task as done:"
@@ -73,7 +90,10 @@ public class Ui {
         showDivider();
     }
 
-    /** Displays feedback before deleting a task. */
+    /** Displays feedback before deleting a task.
+     *
+     * @param task the task about to be deleted
+     */
     public void showTaskDeleted(Task task) {
         showDivider();
         System.out.println("Rocky will remove that annoying task for you!:");
@@ -81,7 +101,10 @@ public class Ui {
         showDivider();
     }
 
-    /** Displays an invalid task-number message. */
+    /** Displays an invalid task-number message.
+     *
+     * @param command the command whose task number was invalid
+     */
     public void showInvalidTaskNumber(String command) {
         System.out.println("Please provide a task number, for example: " + command + " 2");
     }
@@ -91,7 +114,10 @@ public class Ui {
         System.out.println("Rocky cannot find that task number.");
     }
 
-    /** Displays a parser error using the appropriate divider style. */
+    /** Displays a parser error using the appropriate divider style.
+     *
+     * @param command the parsed command containing the error message
+     */
     public void showError(Parser.Command command) {
         if (command.showWithDivider()) showDivider();
         System.out.println(command.getMessage());

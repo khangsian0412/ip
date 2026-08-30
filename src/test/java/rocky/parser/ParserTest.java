@@ -23,6 +23,7 @@ class ParserTest {
         parser = new Parser();
     }
 
+    /** Verifies that simple commands map to their corresponding command types. */
     @Test
     void parseSimpleCommands_returnsExpectedCommandTypes() {
         assertEquals(Parser.CommandType.BYE, parser.parse("bye").getType());
@@ -36,12 +37,14 @@ class ParserTest {
         assertEquals("1", parser.parse("delete 1").getArgument());
     }
 
+    /** Verifies that parser input is trimmed before command recognition. */
     @Test
     void parseCommandsWithSurroundingWhitespace_trimsInput() {
         assertEquals(Parser.CommandType.LIST, parser.parse("  list  ").getType());
         assertEquals("2", parser.parse(" mark 2 ").getArgument());
     }
 
+    /** Verifies that a todo command creates a task with its description. */
     @Test
     void parseTodoCommand_createsTodoWithDescription() {
         Parser.Command command = parser.parse("todo read book");
@@ -53,6 +56,7 @@ class ParserTest {
         assertFalse(command.showWithDivider());
     }
 
+    /** Verifies that a missing todo description produces a helpful response. */
     @Test
     void parseMissingDescription_returnsMissingDescriptionCommand() {
         Parser.Command command = parser.parse("todo");
@@ -63,6 +67,7 @@ class ParserTest {
         assertNull(command.getTask());
     }
 
+    /** Verifies that a date-only deadline is parsed and formatted correctly. */
     @Test
     void parseDeadlineWithDate_createsDeadlineWithDate() {
         Parser.Command command = parser.parse("deadline return book /by 2019-12-02");
@@ -72,6 +77,7 @@ class ParserTest {
         assertEquals("[D][ ] return book (by: Dec 02 2019)", command.getTask().toString());
     }
 
+    /** Verifies that a deadline date and time are parsed correctly. */
     @Test
     void parseDeadlineWithDateAndTime_createsDeadlineWithDateAndTime() {
         Parser.Command command = parser.parse("deadline return book /by 2019-12-02 1800");
@@ -80,6 +86,7 @@ class ParserTest {
         assertEquals("[D][ ] return book (by: Dec 02 2019, 6:00PM)", command.getTask().toString());
     }
 
+    /** Verifies that a deadline without its date marker returns a usage error. */
     @Test
     void parseDeadlineWithoutMarker_returnsUsageError() {
         Parser.Command command = parser.parse("deadline return book");
@@ -89,6 +96,7 @@ class ParserTest {
         assertFalse(command.showWithDivider());
     }
 
+    /** Verifies that an event with date-only endpoints is parsed correctly. */
     @Test
     void parseEventWithDates_createsEventWithDates() {
         Parser.Command command = parser.parse(
@@ -100,6 +108,7 @@ class ParserTest {
                 command.getTask().toString());
     }
 
+    /** Verifies that an event with date-time endpoints is parsed correctly. */
     @Test
     void parseEventWithDateAndTimes_createsEventWithDateAndTimes() {
         Parser.Command command = parser.parse(
@@ -110,6 +119,7 @@ class ParserTest {
                         + " to: Dec 02 2019, 8:00PM)", command.getTask().toString());
     }
 
+    /** Verifies that mixed date and date-time endpoints are rejected. */
     @Test
     void parseEventWithMixedDateFormats_returnsFormatError() {
         Parser.Command command = parser.parse(
@@ -120,6 +130,7 @@ class ParserTest {
                 command.getMessage());
     }
 
+    /** Verifies that invalid dates and event syntax return useful errors. */
     @Test
     void parseInvalidDateOrEventSyntax_returnsUsefulError() {
         Parser.Command invalidDate = parser.parse("deadline return book /by 02-12-2019");
@@ -132,6 +143,7 @@ class ParserTest {
         assertEquals("Use: event DESCRIPTION /from START /to END", invalidEvent.getMessage());
     }
 
+    /** Verifies that an unknown command returns an error with dividers. */
     @Test
     void parseUnknownCommand_returnsErrorWithDivider() {
         Parser.Command command = parser.parse("archive everything");

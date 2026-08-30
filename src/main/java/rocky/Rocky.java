@@ -5,8 +5,14 @@ import rocky.storage.Storage;
 import rocky.task.Task;
 import rocky.ui.Ui;
 
+/** Runs Rocky and coordinates the user interface, parser, task list, and storage. */
 public class Rocky {
     private static final Storage STORAGE = new Storage("./data/rocky.txt");
+
+    /** Creates a Rocky application entry point. */
+    public Rocky() {
+    }
+
     /**
      * Starts the chatbot and processes the user's task commands.
      *
@@ -48,6 +54,7 @@ public class Rocky {
         ui.showBye();
     }
 
+    /** Updates a task's completion state and persists the updated task list. */
     private static void updateTaskStatus(String taskNumberText, String command, boolean completed,
                                          TaskList tasks, Ui ui) {
         try {
@@ -70,6 +77,7 @@ public class Rocky {
         }
     }
 
+    /** Deletes the selected task and persists the updated task list. */
     private static void deleteTask(String taskNumberText, TaskList tasks, Ui ui) {
         try {
             int taskNumber = Integer.parseInt(taskNumberText);
@@ -87,6 +95,7 @@ public class Rocky {
         }
     }
 
+    /** Adds a task to the task list, displays confirmation, and persists the change. */
     private static void addTask(Task task, TaskList tasks, Ui ui) {
         tasks.add(task);
         ui.showTaskAdded(task, tasks.size());
