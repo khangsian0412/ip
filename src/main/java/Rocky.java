@@ -1,13 +1,7 @@
-import java.util.Objects;
 import java.util.Scanner;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 
 public class Rocky {
     private static final Storage STORAGE = new Storage("./data/rocky.txt");
-    private static final DateTimeFormatter INPUT_DATE_FORMAT = DateTimeFormatter.ISO_LOCAL_DATE;
     /**
      * Starts the chatbot and processes the user's task commands.
      *
@@ -30,90 +24,41 @@ public class Rocky {
         Scanner scanner = new Scanner(System.in);
 
         TaskList tasks = new TaskList(STORAGE.load());
+        Parser parser = new Parser();
         while (scanner.hasNextLine()) {
-            String userInput = scanner.nextLine().trim();
-            if (Objects.equals(userInput, "bye")) {
+            Parser.Command command = parser.parse(scanner.nextLine());
+            switch (command.getType()) {
+            case BYE:
+                System.out.println("Bye. We meet again soon!");
+                System.out.println(divider);
+                return;
+            case LIST:
+                listTasks(tasks, divider);
                 break;
-            }
-            if (Objects.equals(userInput, "list")) {
-                System.out.println("Rocky remember you have these tasks");
-                System.out.println(divider);
-                if (tasks.isEmpty()) {
-                    System.out.println("Rocky don't see anything!");
-                } else {
-                    for (int i = 0; i < tasks.size(); i++) {
-                        System.out.println((i + 1) + ". " + tasks.get(i));
-                    }
-                }
-                System.out.println(divider);
-                continue;
-            }
-
-            if (userInput.equals("mark") || userInput.startsWith("mark ")) {
-                updateTaskStatus(userInput, "mark", true, tasks, divider);
-                continue;
-            }
-
-            if (userInput.equals("unmark") || userInput.startsWith("unmark ")) {
-                updateTaskStatus(userInput, "unmark", false, tasks, divider);
-                continue;
-            }
-            if (userInput.equals("delete") || userInput.startsWith("delete ")) {
-                deleteTask(userInput, tasks, divider);
-                continue;
-            }
-            if (userInput.equals("todo") || userInput.startsWith("todo ")) {
-                String description = userInput.substring("todo".length()).trim();
-
-                if (description.isEmpty()) {
-                    System.out.println(divider);
-                    System.out.println("Curious? Rocky don't see description for the task...");
-                    System.out.println(divider);
-                } else {
-                    addTask(new Todo(description), tasks, divider);
-                }
-                continue;
-            }
-            if (userInput.equals("deadline") || userInput.startsWith("deadline ")) {
-                String description = userInput.substring("deadline".length()).trim();
-
-                if (description.isEmpty()) {
-                    System.out.println(divider);
-                    System.out.println("Curious? Rocky don't see description for the task...");
-                    System.out.println(divider);
-                }
-                else {
-                    addDeadline(userInput, tasks, divider);
-                }
-                continue;
-            }
-            if (userInput.equals("event") || userInput.startsWith("event ")) {
-                String description = userInput.substring("event".length()).trim();
-
-                if (description.isEmpty()) {
-                    System.out.println(divider);
-                    System.out.println("Curious? Rocky don't see description for the task...");
-                    System.out.println(divider);
-                }
-                else {
-                    addEvent(userInput, tasks, divider);
-                }
-                continue;
-            }
-            else{
-                System.out.println(divider);
-                System.out.println("Rocky don't understand what this is... Try something else");
-                System.out.println(divider);
+            case MARK:
+                updateTaskStatus(command.getArgument(), "mark", true, tasks, divider);
+                break;
+            case UNMARK:
+                updateTaskStatus(command.getArgument(), "unmark", false, tasks, divider);
+                break;
+            case DELETE:
+                deleteTask(command.getArgument(), tasks, divider);
+                break;
+            case ADD:
+                addTask(command.getTask(), tasks, divider);
+                break;
+            case MISSING_DESCRIPTION:
+            case ERROR:
+                showError(command, divider);
+                break;
             }
         }
         System.out.println("Bye. We meet again soon!");
         System.out.println(divider);
     }
 
-    private static void updateTaskStatus(String userInput, String command, boolean completed,
+    private static void updateTaskStatus(String taskNumberText, String command, boolean completed,
                                          TaskList tasks, String divider) {
-        String taskNumberText = userInput.substring(command.length()).trim();
-
         try {
             int taskNumber = Integer.parseInt(taskNumberText);
             int taskIndex = taskNumber - 1;
@@ -139,8 +84,30 @@ public class Rocky {
         }
     }
 
-    private static void deleteTask(String userInput, TaskList tasks, String divider) {
-        String taskNumberText = userInput.substring("delete".length()).trim();
+    private static void listTasks(TaskList tasks, String divider) {
+        System.out.println("Rocky remember you have these tasks");
+        System.out.println(divider);
+        if (tasks.isEmpty()) {
+            System.out.println("Rocky don't see anything!");
+        } else {
+            for (int i = 0; i < tasks.size(); i++) {
+                System.out.println((i + 1) + ". " + tasks.get(i));
+            }
+        }
+        System.out.println(divider);
+    }
+
+    private static void showError(Parser.Command command, String divider) {
+        if (command.showWithDivider()) {
+            System.out.println(divider);
+        }
+        System.out.println(command.getMessage());
+        if (command.showWithDivider()) {
+            System.out.println(divider);
+        }
+    }
+
+    private static void deleteTask(String taskNumberText, TaskList tasks, String divider) {
         try {
             int taskNumber = Integer.parseInt(taskNumberText);
             int taskIndex = taskNumber - 1;
@@ -171,84 +138,4 @@ public class Rocky {
         STORAGE.save(tasks.asList());
     }
 
-    private static void addDeadline(String userInput, TaskList tasks, String divider) {
-        int byIndex = userInput.indexOf(" /by ");
-        if (byIndex < 0) {
-            System.out.println("Use: deadline DESCRIPTION /by DATE_OR_TIME");
-            return;
-        }
-        String description = userInput.substring("deadline".length(), byIndex).trim();
-        String by = userInput.substring(byIndex + " /by ".length()).trim();
-        ParsedDateTime byDate = parseDateTime(by);
-        if (byDate == null) {
-            printDateFormatError();
-            return;
-        }
-        addTask(byDate.hasTime
-                ? new Deadline(description, byDate.value)
-                : new Deadline(description, byDate.value.toLocalDate()), tasks, divider);
-    }
-
-    private static void addEvent(String userInput, TaskList tasks, String divider) {
-        int fromIndex = userInput.indexOf(" /from ");
-        int toIndex = userInput.indexOf(" /to ");
-        if (fromIndex < 0 || toIndex < 0 || toIndex < fromIndex) {
-            System.out.println("Use: event DESCRIPTION /from START /to END");
-            return;
-        }
-        String description = userInput.substring("event".length(), fromIndex).trim();
-        String from = userInput.substring(fromIndex + " /from ".length(), toIndex).trim();
-        String to = userInput.substring(toIndex + " /to ".length()).trim();
-        ParsedDateTime fromDate = parseDateTime(from);
-        ParsedDateTime toDate = parseDateTime(to);
-        if (fromDate == null || toDate == null) {
-            printDateFormatError();
-            return;
-        }
-        if (fromDate.hasTime != toDate.hasTime) {
-            System.out.println("Use the same date or date-time format for both event dates.");
-            return;
-        }
-        addTask(fromDate.hasTime
-                ? new Event(description, fromDate.value, toDate.value)
-                : new Event(description, fromDate.value.toLocalDate(), toDate.value.toLocalDate()),
-                tasks, divider);
-    }
-
-    /**
-     * Parses a command date using the format accepted by Rocky.
-     *
-     * @param text the user-provided date
-     * @return the parsed date, or {@code null} when the text is invalid
-     */
-    private static ParsedDateTime parseDateTime(String text) {
-        try {
-            if (text.contains("T")) {
-                return new ParsedDateTime(LocalDateTime.parse(text), true);
-            }
-            if (text.contains(" ")) {
-                DateTimeFormatter inputTimeFormat = DateTimeFormatter.ofPattern("uuuu-MM-dd HHmm");
-                return new ParsedDateTime(LocalDateTime.parse(text, inputTimeFormat), true);
-            }
-            return new ParsedDateTime(LocalDate.parse(text, INPUT_DATE_FORMAT).atStartOfDay(), false);
-        } catch (DateTimeParseException e) {
-            return null;
-        }
-    }
-
-    /** Prints the supported date and date-time input formats. */
-    private static void printDateFormatError() {
-        System.out.println("Use yyyy-MM-dd or yyyy-MM-dd HHmm, for example: 2019-10-15 or 2019-12-02 1800");
-    }
-
-    /** Holds a parsed date and whether the original input included a time. */
-    private static class ParsedDateTime {
-        private final LocalDateTime value;
-        private final boolean hasTime;
-
-        ParsedDateTime(LocalDateTime value, boolean hasTime) {
-            this.value = value;
-            this.hasTime = hasTime;
-        }
-    }
 }
