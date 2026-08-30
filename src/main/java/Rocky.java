@@ -7,9 +7,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Scanner;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 
 public class Rocky {
     private static final Path TASK_FILE = Path.of("./data/rocky.txt");
+    private static final DateTimeFormatter INPUT_DATE_FORMAT = DateTimeFormatter.ISO_LOCAL_DATE;
     /**
      * Starts the chatbot and processes the user's task commands.
      *
@@ -181,7 +185,12 @@ public class Rocky {
         }
         String description = userInput.substring("deadline".length(), byIndex).trim();
         String by = userInput.substring(byIndex + " /by ".length()).trim();
-        addTask(new Deadline(description, by), tasks, divider);
+        LocalDate byDate = parseDate(by);
+        if (byDate == null) {
+            System.out.println("Use a date in yyyy-MM-dd format, for example: 2019-10-15");
+            return;
+        }
+        addTask(new Deadline(description, byDate), tasks, divider);
     }
 
     private static void addEvent(String userInput, List<Task> tasks, String divider) {
@@ -194,7 +203,13 @@ public class Rocky {
         String description = userInput.substring("event".length(), fromIndex).trim();
         String from = userInput.substring(fromIndex + " /from ".length(), toIndex).trim();
         String to = userInput.substring(toIndex + " /to ".length()).trim();
-        addTask(new Event(description, from, to), tasks, divider);
+        LocalDate fromDate = parseDate(from);
+        LocalDate toDate = parseDate(to);
+        if (fromDate == null || toDate == null) {
+            System.out.println("Use dates in yyyy-MM-dd format, for example: 2019-10-15");
+            return;
+        }
+        addTask(new Event(description, fromDate, toDate), tasks, divider);
     }
 
     private static void saveTasks(List<Task> tasks) {
@@ -293,9 +308,18 @@ public class Rocky {
             if (type.equals("T") && fields.length == 3) {
                 task = new Todo(fields[2]);
             } else if (type.equals("D") && fields.length == 4) {
-                task = new Deadline(fields[2], fields[3]);
+                LocalDate byDate = parseDate(fields[3]);
+                if (byDate == null) {
+                    return null;
+                }
+                task = new Deadline(fields[2], byDate);
             } else if (type.equals("E") && fields.length == 5) {
-                task = new Event(fields[2], fields[3], fields[4]);
+                LocalDate fromDate = parseDate(fields[3]);
+                LocalDate toDate = parseDate(fields[4]);
+                if (fromDate == null || toDate == null) {
+                    return null;
+                }
+                task = new Event(fields[2], fromDate, toDate);
             } else {
                 return null;
             }
@@ -309,6 +333,20 @@ public class Rocky {
             }
             return task;
         } catch (RuntimeException e) {
+            return null;
+        }
+    }
+
+    /**
+     * Parses a command date using the format accepted by Rocky.
+     *
+     * @param text the user-provided date
+     * @return the parsed date, or {@code null} when the text is invalid
+     */
+    private static LocalDate parseDate(String text) {
+        try {
+            return LocalDate.parse(text, INPUT_DATE_FORMAT);
+        } catch (DateTimeParseException e) {
             return null;
         }
     }
