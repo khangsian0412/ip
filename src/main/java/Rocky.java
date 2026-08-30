@@ -7,9 +7,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Scanner;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 
 public class Rocky {
     private static final Path TASK_FILE = Path.of("./data/rocky.txt");
+    private static final DateTimeFormatter INPUT_DATE_FORMAT = DateTimeFormatter.ISO_LOCAL_DATE;
     /**
      * Starts the chatbot and processes the user's task commands.
      *
@@ -181,7 +186,14 @@ public class Rocky {
         }
         String description = userInput.substring("deadline".length(), byIndex).trim();
         String by = userInput.substring(byIndex + " /by ".length()).trim();
-        addTask(new Deadline(description, by), tasks, divider);
+        ParsedDateTime byDate = parseDateTime(by);
+        if (byDate == null) {
+            printDateFormatError();
+            return;
+        }
+        addTask(byDate.hasTime
+                ? new Deadline(description, byDate.value)
+                : new Deadline(description, byDate.value.toLocalDate()), tasks, divider);
     }
 
     private static void addEvent(String userInput, List<Task> tasks, String divider) {
@@ -194,7 +206,20 @@ public class Rocky {
         String description = userInput.substring("event".length(), fromIndex).trim();
         String from = userInput.substring(fromIndex + " /from ".length(), toIndex).trim();
         String to = userInput.substring(toIndex + " /to ".length()).trim();
-        addTask(new Event(description, from, to), tasks, divider);
+        ParsedDateTime fromDate = parseDateTime(from);
+        ParsedDateTime toDate = parseDateTime(to);
+        if (fromDate == null || toDate == null) {
+            printDateFormatError();
+            return;
+        }
+        if (fromDate.hasTime != toDate.hasTime) {
+            System.out.println("Use the same date or date-time format for both event dates.");
+            return;
+        }
+        addTask(fromDate.hasTime
+                ? new Event(description, fromDate.value, toDate.value)
+                : new Event(description, fromDate.value.toLocalDate(), toDate.value.toLocalDate()),
+                tasks, divider);
     }
 
     private static void saveTasks(List<Task> tasks) {
@@ -293,9 +318,25 @@ public class Rocky {
             if (type.equals("T") && fields.length == 3) {
                 task = new Todo(fields[2]);
             } else if (type.equals("D") && fields.length == 4) {
-                task = new Deadline(fields[2], fields[3]);
+                ParsedDateTime byDate = parseDateTime(fields[3]);
+                if (byDate == null) {
+                    return null;
+                }
+                task = byDate.hasTime
+                        ? new Deadline(fields[2], byDate.value)
+                        : new Deadline(fields[2], byDate.value.toLocalDate());
             } else if (type.equals("E") && fields.length == 5) {
-                task = new Event(fields[2], fields[3], fields[4]);
+                ParsedDateTime fromDate = parseDateTime(fields[3]);
+                ParsedDateTime toDate = parseDateTime(fields[4]);
+                if (fromDate == null || toDate == null) {
+                    return null;
+                }
+                if (fromDate.hasTime != toDate.hasTime) {
+                    return null;
+                }
+                task = fromDate.hasTime
+                        ? new Event(fields[2], fromDate.value, toDate.value)
+                        : new Event(fields[2], fromDate.value.toLocalDate(), toDate.value.toLocalDate());
             } else {
                 return null;
             }
@@ -310,6 +351,43 @@ public class Rocky {
             return task;
         } catch (RuntimeException e) {
             return null;
+        }
+    }
+
+    /**
+     * Parses a command date using the format accepted by Rocky.
+     *
+     * @param text the user-provided date
+     * @return the parsed date, or {@code null} when the text is invalid
+     */
+    private static ParsedDateTime parseDateTime(String text) {
+        try {
+            if (text.contains("T")) {
+                return new ParsedDateTime(LocalDateTime.parse(text), true);
+            }
+            if (text.contains(" ")) {
+                DateTimeFormatter inputTimeFormat = DateTimeFormatter.ofPattern("uuuu-MM-dd HHmm");
+                return new ParsedDateTime(LocalDateTime.parse(text, inputTimeFormat), true);
+            }
+            return new ParsedDateTime(LocalDate.parse(text, INPUT_DATE_FORMAT).atStartOfDay(), false);
+        } catch (DateTimeParseException e) {
+            return null;
+        }
+    }
+
+    /** Prints the supported date and date-time input formats. */
+    private static void printDateFormatError() {
+        System.out.println("Use yyyy-MM-dd or yyyy-MM-dd HHmm, for example: 2019-10-15 or 2019-12-02 1800");
+    }
+
+    /** Holds a parsed date and whether the original input included a time. */
+    private static class ParsedDateTime {
+        private final LocalDateTime value;
+        private final boolean hasTime;
+
+        ParsedDateTime(LocalDateTime value, boolean hasTime) {
+            this.value = value;
+            this.hasTime = hasTime;
         }
     }
 }
