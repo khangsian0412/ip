@@ -6,16 +6,21 @@ import java.util.List;
 
 import rocky.task.Task;
 
-/** Owns the collection of tasks and its basic list operations. */
+/**
+ * Owns the collection of tasks and its basic list operations.
+ */
 public class TaskList {
     private final List<Task> tasks;
 
-    /** Creates an empty task list. */
+    /**
+     * Creates an empty task list.
+     */
     public TaskList() {
         this.tasks = new ArrayList<>();
     }
 
-    /** Creates a task list containing a copy of the supplied tasks.
+    /**
+     * Creates a task list containing a copy of the supplied tasks.
      *
      * @param tasks the tasks to copy into this list.
      */
@@ -23,7 +28,8 @@ public class TaskList {
         this.tasks = new ArrayList<>(tasks);
     }
 
-    /** Adds a task to the end of the list.
+    /**
+     * Adds a task to the end of the list.
      *
      * @param task the task to add.
      */
@@ -31,7 +37,8 @@ public class TaskList {
         tasks.add(task);
     }
 
-    /** Returns the task at the supplied zero-based index.
+    /**
+     * Returns the task at the supplied zero-based index.
      *
      * @param index the zero-based task index.
      * @return the task at the requested index.
@@ -40,7 +47,8 @@ public class TaskList {
         return tasks.get(index);
     }
 
-    /** Removes the task at the supplied zero-based index.
+    /**
+     * Removes the task at the supplied zero-based index.
      *
      * @param index the zero-based task index.
      */
@@ -48,7 +56,8 @@ public class TaskList {
         tasks.remove(index);
     }
 
-    /** Returns whether the list contains no tasks.
+    /**
+     * Returns whether the list contains no tasks.
      *
      * @return {@code true} when the list contains no tasks.
      */
@@ -56,7 +65,8 @@ public class TaskList {
         return tasks.isEmpty();
     }
 
-    /** Returns the number of tasks in the list.
+    /**
+     * Returns the number of tasks in the list.
      *
      * @return the number of tasks.
      */
@@ -64,7 +74,8 @@ public class TaskList {
         return tasks.size();
     }
 
-    /** Returns a read-only view for persistence.
+    /**
+     * Returns a read-only view for persistence.
      *
      * @return an unmodifiable view of the tasks.
      */
