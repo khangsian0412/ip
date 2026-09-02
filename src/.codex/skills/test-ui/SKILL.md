@@ -39,7 +39,10 @@ sdk use java 25.0.3.fx-zulu
 python3 .codex/skills/test-ui/scripts/run_ui_tests.py
 ```
 
-The runner compiles all files in `main/java`, runs the `Rocky` main class, and reads `test/ui-test-plan.md` by default. Use `--help` for optional paths or a different main class.
+Because `rocky.Rocky` launches the graphical interface, run the console plan with
+`--main-class rocky.cli.CliLauncher`.
+
+The runner compiles all files in `main/java`, runs the selected main class, and reads `test/ui-test-plan.md` by default. Use `--help` for optional paths or a different main class.
 
 ## Results
 
