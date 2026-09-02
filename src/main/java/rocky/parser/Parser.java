@@ -10,38 +10,64 @@ import rocky.task.Event;
 import rocky.task.Task;
 import rocky.task.Todo;
 
-/** Converts user input into commands that Rocky can execute. */
+/**
+ * Converts user input into commands that Rocky can execute.
+ */
 public class Parser {
     private static final DateTimeFormatter INPUT_DATE_FORMAT = DateTimeFormatter.ISO_LOCAL_DATE;
 
-    /** Creates a parser for Rocky commands. */
+    /**
+     * Creates a parser for Rocky commands.
+     */
     public Parser() {
     }
 
-    /** The command categories understood by Rocky. */
+    /**
+     * The command categories understood by Rocky.
+     */
     public enum CommandType {
-        /** Exits the application. */
+        /**
+         * Exits the application.
+         */
         BYE,
-        /** Displays all tasks. */
+        /**
+         * Displays all tasks.
+         */
         LIST,
-        /** Marks a task as complete. */
+        /**
+         * Marks a task as complete.
+         */
         MARK,
-        /** Marks a task as incomplete. */
+        /**
+         * Marks a task as incomplete.
+         */
         UNMARK,
-        /** Deletes a task. */
+        /**
+         * Deletes a task.
+         */
         DELETE,
-        /** Adds a task. */
+        /**
+         * Adds a task.
+         */
         ADD,
-        /** Reports an invalid command. */
+        /**
+         * Reports an invalid command.
+         */
         ERROR,
-        /** Reports a command with no task description. */
+        /**
+         * Reports a command with no task description.
+         */
         MISSING_DESCRIPTION,
 
-        /** Find based on task description**/
+        /**
+         * Finds tasks based on their descriptions.
+         */
         FIND
     }
 
-    /** A parsed command and the data needed to execute it. */
+    /**
+     * A parsed command and the data needed to execute it.
+     */
     public static class Command {
         private final CommandType type;
         private final String argument;
@@ -70,31 +96,41 @@ public class Parser {
          *
          * @return the command category.
          */
-        public CommandType getType() { return type; }
+        public CommandType getType() {
+            return type;
+        }
 
         /** Returns the argument supplied with this command.
          *
          * @return the command argument, or {@code null} when there is none.
          */
-        public String getArgument() { return argument; }
+        public String getArgument() {
+            return argument;
+        }
 
         /** Returns the task created by this command.
          *
          * @return the created task, or {@code null} when this command does not add a task.
          */
-        public Task getTask() { return task; }
+        public Task getTask() {
+            return task;
+        }
 
         /** Returns the user-facing message associated with this command.
          *
          * @return the command message, or {@code null} when there is none.
          */
-        public String getMessage() { return message; }
+        public String getMessage() {
+            return message;
+        }
 
         /** Returns whether the message should be printed between UI dividers.
          *
          * @return {@code true} when dividers should surround the message.
          */
-        public boolean showWithDivider() { return showWithDivider; }
+        public boolean showWithDivider() {
+            return showWithDivider;
+        }
     }
 
     /** Parses one line of user input.
@@ -104,8 +140,12 @@ public class Parser {
      */
     public Command parse(String userInput) {
         String input = userInput.trim();
-        if (input.equals("bye")) return command(CommandType.BYE);
-        if (input.equals("list")) return command(CommandType.LIST);
+        if (input.equals("bye")) {
+            return command(CommandType.BYE);
+        }
+        if (input.equals("list")) {
+            return command(CommandType.LIST);
+        }
         if (input.equals("find")) {
             return error("Use: find KEYWORD", false);
         }
@@ -171,7 +211,9 @@ public class Parser {
             return error("Use: event DESCRIPTION /from START /to END", false);
         }
         String description = input.substring("event".length(), fromIndex).trim();
-        if (description.isEmpty()) return missingDescription();
+        if (description.isEmpty()) {
+            return missingDescription();
+        }
         ParsedDateTime from = parseDateTime(input.substring(fromIndex + " /from ".length(), toIndex).trim());
         ParsedDateTime to = parseDateTime(input.substring(toIndex + " /to ".length()).trim());
         if (from == null || to == null) {
@@ -233,13 +275,17 @@ public class Parser {
         return new Command(CommandType.ADD, null, task, null, false);
     }
 
-    /** Creates the standard missing-description response. */
+    /**
+     * Creates the standard missing-description response.
+     */
     private Command missingDescription() {
         return new Command(CommandType.MISSING_DESCRIPTION, null, null,
                 "Curious? Rocky don't see description for the task...", true);
     }
 
-    /** Creates the standard invalid-date response. */
+    /**
+     * Creates the standard invalid-date response.
+     */
     private Command dateError() {
         return error("Use yyyy-MM-dd or yyyy-MM-dd HHmm, for example: 2019-10-15 or 2019-12-02 1800", false);
     }

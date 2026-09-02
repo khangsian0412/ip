@@ -7,17 +7,23 @@ import rocky.TaskList;
 import rocky.parser.Parser;
 import rocky.task.Task;
 
-/** Handles Rocky's console input and output. */
+/**
+ * Handles Rocky's console input and output.
+ */
 public class Ui {
     private static final String DIVIDER = "____________________________________________________________";
     private final Scanner scanner;
 
-    /** Creates a console UI connected to standard input. */
+    /**
+     * Creates a console UI connected to standard input.
+     */
     public Ui() {
         this.scanner = new Scanner(System.in);
     }
 
-    /** Displays Rocky's welcome message. */
+    /**
+     * Displays Rocky's welcome message.
+     */
     public void showWelcome() {
         String banner = " ____             _          \n"
                 + "|  _ \\ ___   ___| | ___   _ \n"
@@ -127,7 +133,9 @@ public class Ui {
         System.out.println("Please provide a task number, for example: " + command + " 2");
     }
 
-    /** Displays a missing-task message. */
+    /**
+     * Displays a missing-task message.
+     */
     public void showTaskNotFound() {
         System.out.println("Rocky cannot find that task number.");
     }
@@ -137,12 +145,18 @@ public class Ui {
      * @param command the parsed command containing the error message.
      */
     public void showError(Parser.Command command) {
-        if (command.showWithDivider()) showDivider();
+        if (command.showWithDivider()) {
+            showDivider();
+        }
         System.out.println(command.getMessage());
-        if (command.showWithDivider()) showDivider();
+        if (command.showWithDivider()) {
+            showDivider();
+        }
     }
 
-    /** Displays Rocky's goodbye message. */
+    /**
+     * Displays Rocky's goodbye message.
+     */
     public void showBye() {
         System.out.println("Bye. We meet again soon!");
         showDivider();

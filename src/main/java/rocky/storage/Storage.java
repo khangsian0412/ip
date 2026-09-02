@@ -17,12 +17,15 @@ import rocky.task.Event;
 import rocky.task.Task;
 import rocky.task.Todo;
 
-/** Handles loading tasks from and saving tasks to a file. */
+/**
+ * Handles loading tasks from and saving tasks to a file.
+ */
 public class Storage {
     private static final DateTimeFormatter INPUT_DATE_FORMAT = DateTimeFormatter.ISO_LOCAL_DATE;
     private final Path taskFile;
 
-    /** Creates storage for the supplied task file path.
+    /**
+     * Creates storage for the supplied task file path.
      *
      * @param filePath the path of the task file.
      */
@@ -30,7 +33,8 @@ public class Storage {
         this.taskFile = Path.of(filePath);
     }
 
-    /** Saves all tasks, creating the parent directory when necessary.
+    /**
+     * Saves all tasks, creating the parent directory when necessary.
      *
      * @param tasks the tasks to persist.
      */
@@ -67,7 +71,8 @@ public class Storage {
         }
     }
 
-    /** Loads valid tasks, returning an empty list when no readable file exists.
+    /**
+     * Loads valid tasks, returning an empty list when no readable file exists.
      *
      * @return the valid tasks reconstructed from the task file.
      */
@@ -132,7 +137,9 @@ public class Storage {
             } else {
                 return null;
             }
-            if (fields[1].equals("1")) task.markAsDone();
+            if (fields[1].equals("1")) {
+                task.markAsDone();
+            }
             return task;
         } catch (RuntimeException e) {
             return null;
