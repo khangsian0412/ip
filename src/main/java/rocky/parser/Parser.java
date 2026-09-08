@@ -85,6 +85,11 @@ public class Parser {
          */
         private Command(CommandType type, String argument, Task task,
                         String message, boolean showWithDivider) {
+            assert type != null : "Parsed commands must have a command type";
+            assert type != CommandType.ADD || task != null
+                    : "ADD commands must contain a task";
+            assert (type != CommandType.ERROR && type != CommandType.MISSING_DESCRIPTION)
+                    || message != null : "Error commands must contain a message";
             this.type = type;
             this.argument = argument;
             this.task = task;
@@ -310,6 +315,7 @@ public class Parser {
          * @param hasTime whether the original input included a time
          */
         ParsedDateTime(LocalDateTime value, boolean hasTime) {
+            assert value != null : "Parsed date-time values must not be null";
             this.value = value;
             this.hasTime = hasTime;
         }

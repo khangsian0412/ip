@@ -108,6 +108,9 @@ public class RockyGui extends Application {
 
     /** Creates one chat message with its speaker label, text, and avatar. */
     private HBox createMessage(String sender, String message, Image avatar, boolean isUser) {
+        assert sender != null : "Conversation messages must have a sender";
+        assert message != null : "Conversation messages must have text";
+        assert avatar != null : "Conversation messages must have an avatar";
         ImageView avatarView = new ImageView(avatar);
         avatarView.setFitWidth(44);
         avatarView.setFitHeight(44);
@@ -164,6 +167,7 @@ public class RockyGui extends Application {
      * @return the response to display in the GUI.
      */
     private String execute(Parser.Command command) {
+        assert command != null : "GUI must execute a parsed command";
         switch (command.getType()) {
         case BYE:
             return "Bye. We meet again soon!\n" + DIVIDER;
@@ -172,6 +176,7 @@ public class RockyGui extends Application {
         case FIND:
             return formatMatchingTasks(tasks.find(command.getArgument()));
         case ADD:
+            assert command.getTask() != null : "ADD commands must contain a task";
             tasks.add(command.getTask());
             storage.save(tasks.asList());
             return formatTaskAdded(command.getTask(), tasks.size());
