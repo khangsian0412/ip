@@ -1,11 +1,16 @@
 package rocky.task;
 
+import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
 /**
  * Represents the common state and behavior of all task types.
  */
 public abstract class Task {
+    protected static final DateTimeFormatter DISPLAY_DATE_FORMAT =
+            DateTimeFormatter.ofPattern("MMM dd yyyy", Locale.ENGLISH);
+    protected static final DateTimeFormatter DISPLAY_DATE_TIME_FORMAT =
+            DateTimeFormatter.ofPattern("MMM dd yyyy, h:mma", Locale.ENGLISH);
     private final String description;
     private boolean isDone;
 

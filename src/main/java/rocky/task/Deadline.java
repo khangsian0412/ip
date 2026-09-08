@@ -3,16 +3,11 @@ package rocky.task;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Locale;
 
 /**
  * Represents a task that must be completed by a specified time.
  */
 public class Deadline extends Task {
-    private static final DateTimeFormatter DISPLAY_FORMAT =
-            DateTimeFormatter.ofPattern("MMM dd yyyy", Locale.ENGLISH);
-    private static final DateTimeFormatter DISPLAY_TIME_FORMAT =
-            DateTimeFormatter.ofPattern("MMM dd yyyy, h:mma", Locale.ENGLISH);
     private final LocalDateTime by;
     private final boolean hasTime;
 
@@ -47,7 +42,7 @@ public class Deadline extends Task {
      */
     @Override
     public String toString() {
-        DateTimeFormatter format = hasTime ? DISPLAY_TIME_FORMAT : DISPLAY_FORMAT;
+        DateTimeFormatter format = hasTime ? DISPLAY_DATE_TIME_FORMAT : DISPLAY_DATE_FORMAT;
         return "[D][" + getStatusIcon() + "] " + getDescription()
                 + " (by: " + by.format(format) + ")";
     }

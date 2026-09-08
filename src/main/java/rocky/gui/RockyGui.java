@@ -25,12 +25,22 @@ import rocky.task.Task;
 
 /** Provides a JavaFX interface for Rocky while reusing its existing command logic. */
 public class RockyGui extends Application {
+    private static final int MESSAGE_LIST_SPACING = 12;
+    private static final int CONTENT_SPACING = 12;
+    private static final int COMMAND_BAR_SPACING = 8;
+    private static final int MESSAGE_SPACING = 3;
+    private static final int AVATAR_SIZE = 44;
+    private static final int USER_MESSAGE_WIDTH = 220;
+    private static final int ROCKY_MESSAGE_WIDTH = 560;
+    private static final int WINDOW_WIDTH = 620;
+    private static final int WINDOW_HEIGHT = 460;
+    private static final double LATEST_MESSAGE_SCROLL_POSITION = 1.0;
     private static final String DIVIDER = "____________________________________________________________";
     private static final String TASK_FILE_PATH = "./data/rocky.txt";
     private final Storage storage = new Storage(TASK_FILE_PATH);
     private final Parser parser = new Parser();
     private final TaskList tasks = new TaskList(storage.load());
-    private final VBox messageList = new VBox(12);
+    private final VBox messageList = new VBox(MESSAGE_LIST_SPACING);
     private final ScrollPane conversation = new ScrollPane(messageList);
     private final TextField commandInput = new TextField();
     private final Image userAvatar = loadAvatar("/rocky/gui/user-avatar.jpeg");
@@ -54,7 +64,7 @@ public class RockyGui extends Application {
         conversation.setFitToWidth(true);
         conversation.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         messageList.heightProperty().addListener((observable, oldHeight, newHeight) ->
-                Platform.runLater(() -> conversation.setVvalue(1.0)));
+                Platform.runLater(() -> conversation.setVvalue(LATEST_MESSAGE_SCROLL_POSITION)));
         addRockyMessage(formatWelcome());
 
         commandInput.setPromptText("Enter a command, e.g. find book");
@@ -63,15 +73,15 @@ public class RockyGui extends Application {
         Button sendButton = new Button("Send");
         sendButton.setOnAction(event -> processCommand());
 
-        HBox commandBar = new HBox(8, commandInput, sendButton);
+        HBox commandBar = new HBox(COMMAND_BAR_SPACING, commandInput, sendButton);
         HBox.setHgrow(commandInput, Priority.ALWAYS);
 
-        VBox content = new VBox(12, title, conversation, commandBar);
+        VBox content = new VBox(CONTENT_SPACING, title, conversation, commandBar);
         content.setPadding(new Insets(16));
         VBox.setVgrow(conversation, Priority.ALWAYS);
 
         BorderPane root = new BorderPane(content);
-        Scene scene = new Scene(root, 620, 460);
+        Scene scene = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
         stage.setTitle("Rocky Task Manager");
         stage.setScene(scene);
         stage.show();
@@ -112,8 +122,8 @@ public class RockyGui extends Application {
         assert message != null : "Conversation messages must have text";
         assert avatar != null : "Conversation messages must have an avatar";
         ImageView avatarView = new ImageView(avatar);
-        avatarView.setFitWidth(44);
-        avatarView.setFitHeight(44);
+        avatarView.setFitWidth(AVATAR_SIZE);
+        avatarView.setFitHeight(AVATAR_SIZE);
         avatarView.setPreserveRatio(true);
 
         Label senderLabel = new Label(sender);
@@ -123,16 +133,17 @@ public class RockyGui extends Application {
         messageLabel.setWrapText(true);
         messageLabel.setMaxWidth(Double.MAX_VALUE);
 
-        VBox messageBubble = new VBox(3, senderLabel, messageLabel);
-        messageBubble.setPrefWidth(isUser ? 220 : 560);
-        messageBubble.setMaxWidth(isUser ? 220 : 560);
+        VBox messageBubble = new VBox(MESSAGE_SPACING, senderLabel, messageLabel);
+        int messageWidth = isUser ? USER_MESSAGE_WIDTH : ROCKY_MESSAGE_WIDTH;
+        messageBubble.setPrefWidth(messageWidth);
+        messageBubble.setMaxWidth(messageWidth);
         messageBubble.setPadding(new Insets(10));
         messageBubble.setStyle(isUser
                 ? "-fx-background-color: #dbeafe; -fx-background-radius: 12;"
                 : "-fx-background-color: #fff1cc; -fx-background-radius: 12;"
                 + "-fx-border-color: #c58b1b; -fx-border-width: 1.5;"
                 + "-fx-border-radius: 12; -fx-effect: dropshadow(gaussian, #999999, 4, 0.2, 0, 1);");
-        HBox messageRow = new HBox(8);
+        HBox messageRow = new HBox(COMMAND_BAR_SPACING);
         messageRow.setAlignment(Pos.TOP_RIGHT);
         if (isUser) {
             messageRow.getChildren().addAll(messageBubble, avatarView);
@@ -149,7 +160,7 @@ public class RockyGui extends Application {
         Platform.runLater(() -> {
             messageList.applyCss();
             messageList.layout();
-            conversation.setVvalue(1.0);
+            conversation.setVvalue(LATEST_MESSAGE_SCROLL_POSITION);
         });
     }
 

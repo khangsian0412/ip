@@ -111,38 +111,76 @@ public class Storage {
         for (int i = 0; i < fields.length; i++) {
             fields[i] = fields[i].trim();
         }
-        try {
-            if (fields.length < 2 || fields[0].isEmpty() || fields[1].isEmpty()
-                    || (!fields[1].equals("0") && !fields[1].equals("1"))) {
-                return null;
-            }
-            Task task;
-            if (fields[0].equals("T") && fields.length == 3 && !fields[2].isEmpty()) {
-                task = new Todo(fields[2]);
-            } else if (fields[0].equals("D") && fields.length == 4 && !fields[2].isEmpty()) {
-                ParsedDateTime by = parseDateTime(fields[3]);
-                if (by == null) {
-                    return null;
-                }
-                task = by.hasTime ? new Deadline(fields[2], by.value)
-                        : new Deadline(fields[2], by.value.toLocalDate());
-            } else if (fields[0].equals("E") && fields.length == 5 && !fields[2].isEmpty()) {
-                ParsedDateTime from = parseDateTime(fields[3]);
-                ParsedDateTime to = parseDateTime(fields[4]);
-                if (from == null || to == null || from.hasTime != to.hasTime) {
-                    return null;
-                }
-                task = from.hasTime ? new Event(fields[2], from.value, to.value)
-                        : new Event(fields[2], from.value.toLocalDate(), to.value.toLocalDate());
-            } else {
-                return null;
-            }
-            if (fields[1].equals("1")) {
-                task.markAsDone();
-            }
-            return task;
-        } catch (RuntimeException e) {
+        if (!hasValidStatus(fields)) {
             return null;
+        }
+        try {
+            Task task = createTask(fields);
+            if (task == null) {
+                return null;
+            }
+            restoreCompletionStatus(task, fields[1]);
+            return task;
+        } catch (RuntimeException exception) {
+            return null;
+        }
+    }
+
+    /** Checks the fields shared by every stored task record. */
+    private boolean hasValidStatus(String[] fields) {
+        return fields.length >= 2 && !fields[0].isEmpty() && !fields[1].isEmpty()
+                && (fields[1].equals("0") || fields[1].equals("1"));
+    }
+
+    /** Creates a task from its type-specific storage fields. */
+    private Task createTask(String[] fields) {
+        return switch (fields[0]) {
+        case "T" -> parseTodo(fields);
+        case "D" -> parseDeadline(fields);
+        case "E" -> parseEvent(fields);
+        default -> null;
+        };
+    }
+
+    /** Parses a stored to-do record. */
+    private Task parseTodo(String[] fields) {
+        if (fields.length != 3 || fields[2].isEmpty()) {
+            return null;
+        }
+        return new Todo(fields[2]);
+    }
+
+    /** Parses a stored deadline record. */
+    private Task parseDeadline(String[] fields) {
+        if (fields.length != 4 || fields[2].isEmpty()) {
+            return null;
+        }
+        ParsedDateTime by = parseDateTime(fields[3]);
+        if (by == null) {
+            return null;
+        }
+        return by.hasTime ? new Deadline(fields[2], by.value)
+                : new Deadline(fields[2], by.value.toLocalDate());
+    }
+
+    /** Parses a stored event record. */
+    private Task parseEvent(String[] fields) {
+        if (fields.length != 5 || fields[2].isEmpty()) {
+            return null;
+        }
+        ParsedDateTime from = parseDateTime(fields[3]);
+        ParsedDateTime to = parseDateTime(fields[4]);
+        if (from == null || to == null || from.hasTime != to.hasTime) {
+            return null;
+        }
+        return from.hasTime ? new Event(fields[2], from.value, to.value)
+                : new Event(fields[2], from.value.toLocalDate(), to.value.toLocalDate());
+    }
+
+    /** Restores the completion state encoded in a stored status field. */
+    private void restoreCompletionStatus(Task task, String status) {
+        if (status.equals("1")) {
+            task.markAsDone();
         }
     }
 
