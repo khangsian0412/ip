@@ -4,10 +4,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
+import rocky.task.Deadline;
+import rocky.task.Event;
 import rocky.task.Task;
 import rocky.task.Todo;
 
@@ -102,5 +106,23 @@ class TaskListTest {
         TaskList tasks = new TaskList(List.of(new Todo("read book")));
 
         assertTrue(tasks.find("meeting").isEmpty());
+    }
+
+    /** Verifies that dated tasks are sorted before undated tasks chronologically. */
+    @Test
+    void sortByDate_mixedTasks_ordersDatedTasksFirst() {
+        Task undatedTask = new Todo("undated");
+        Task laterDeadline = new Deadline("later", LocalDate.of(2025, 1, 2));
+        Task earliestEvent = new Event("earliest",
+                LocalDateTime.of(2025, 1, 1, 8, 0),
+                LocalDateTime.of(2025, 1, 1, 9, 0));
+        Task earlierDeadline = new Deadline("earlier", LocalDate.of(2024, 12, 31));
+        TaskList tasks = new TaskList(List.of(undatedTask, laterDeadline,
+                earliestEvent, earlierDeadline));
+
+        tasks.sortByDate();
+
+        assertEquals(List.of(earlierDeadline, earliestEvent, laterDeadline, undatedTask),
+                tasks.asList());
     }
 }

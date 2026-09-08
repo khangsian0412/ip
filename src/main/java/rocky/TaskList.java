@@ -1,7 +1,9 @@
 package rocky;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import rocky.task.Task;
@@ -85,6 +87,12 @@ public class TaskList {
      */
     public List<Task> asList() {
         return Collections.unmodifiableList(tasks);
+    }
+
+    /** Sorts dated tasks chronologically and places undated tasks last. */
+    public void sortByDate() {
+        tasks.sort(Comparator.comparing(task ->
+                task.getSortDate().orElse(LocalDateTime.MAX)));
     }
 
     /** Returns tasks whose descriptions contain the supplied keyword.

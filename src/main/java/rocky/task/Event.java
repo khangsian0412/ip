@@ -3,6 +3,7 @@ package rocky.task;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Optional;
 
 /**
  * Represents a task that occurs between a start and end time.
@@ -38,6 +39,15 @@ public class Event extends Task {
         this.from = from;
         this.to = to;
         this.hasTime = true;
+    }
+
+    /** Returns the event start used for chronological sorting.
+     *
+     * @return this event's start date and time.
+     */
+    @Override
+    public Optional<LocalDateTime> getSortDate() {
+        return Optional.of(from);
     }
 
     /**

@@ -24,7 +24,12 @@ public class CliLauncher {
                 ui.showBye();
                 return;
             case LIST:
+                sortTasks(tasks);
                 ui.showTasks(tasks);
+                break;
+            case SORT:
+                sortTasks(tasks);
+                ui.showSortedTasks(tasks);
                 break;
             case FIND:
                 ui.showMatchingTasks(tasks.find(command.getArgument()));
@@ -97,6 +102,12 @@ public class CliLauncher {
     private static void addTask(Task task, TaskList tasks, Ui ui) {
         tasks.add(task);
         ui.showTaskAdded(task, tasks.size());
+        STORAGE.save(tasks.asList());
+    }
+
+    /** Sorts and persists the task list. */
+    private static void sortTasks(TaskList tasks) {
+        tasks.sortByDate();
         STORAGE.save(tasks.asList());
     }
 }

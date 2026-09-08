@@ -136,9 +136,9 @@ Nice! Rocky marked this task as done:
 ____________________________________________________________
 Rocky remember you have these tasks
 ____________________________________________________________
-1. [T][X] read book
-2. [D][ ] return book (by: Dec 02 2019, 6:00PM)
-3. [E][ ] project meeting (from: Dec 02 2019, 6:00PM to: Dec 02 2019, 8:00PM)
+1. [D][ ] return book (by: Dec 02 2019, 6:00PM)
+2. [E][ ] project meeting (from: Dec 02 2019, 6:00PM to: Dec 02 2019, 8:00PM)
+3. [T][X] read book
 ____________________________________________________________
 Bye. We meet again soon!
 ____________________________________________________________
@@ -168,9 +168,9 @@ Amaze, what a special human being! What rocky do for you?
 ____________________________________________________________
 Rocky remember you have these tasks
 ____________________________________________________________
-1. [T][X] read book
-2. [D][ ] return book (by: Dec 02 2019, 6:00PM)
-3. [E][ ] project meeting (from: Dec 02 2019, 6:00PM to: Dec 02 2019, 8:00PM)
+1. [D][ ] return book (by: Dec 02 2019, 6:00PM)
+2. [E][ ] project meeting (from: Dec 02 2019, 6:00PM to: Dec 02 2019, 8:00PM)
+3. [T][X] read book
 ____________________________________________________________
 Bye. We meet again soon!
 ____________________________________________________________
@@ -200,8 +200,55 @@ Amaze, what a special human being! What rocky do for you?
 ____________________________________________________________
 ____________________________________________________________
 Here are the matching tasks in your list:
-1. [T][X] read book
+1. [D][ ] return book (by: Dec 02 2019, 6:00PM)
+2. [T][X] read book
+____________________________________________________________
+Bye. We meet again soon!
+____________________________________________________________
+```
+
+## Sort tasks by date
+**Aim:** Verify that Rocky sorts dated tasks from earliest to latest and places undated tasks last.
+
+**Input:**
+```text
+todo future note
+deadline old reminder /by 2018-01-01
+sort
+bye
+```
+
+**Expected output:**
+```text
+____________________________________________________________
+ ____             _          
+|  _ \ ___   ___| | ___   _ 
+| |_) / _ \ / __| |/ / | | |
+|  _ < (_) | (__|   <| |_| |
+|_| \_\___/ \___|_|\_\__, |
+                         |___/
+
+Hello! I Rocky.
+Amaze, what a special human being! What rocky do for you?
+____________________________________________________________
+____________________________________________________________
+Amaze! Rocky add this to task...:
+[T][ ] future note
+Rocky see 4 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+Amaze! Rocky add this to task...:
+[D][ ] old reminder (by: Jan 01 2018)
+Rocky see 5 tasks in the list.
+____________________________________________________________
+Rocky help you sort the task from earliest to latest!
+Rocky remember you have these tasks
+____________________________________________________________
+1. [D][ ] old reminder (by: Jan 01 2018)
 2. [D][ ] return book (by: Dec 02 2019, 6:00PM)
+3. [E][ ] project meeting (from: Dec 02 2019, 6:00PM to: Dec 02 2019, 8:00PM)
+4. [T][X] read book
+5. [T][ ] future note
 ____________________________________________________________
 Bye. We meet again soon!
 ____________________________________________________________

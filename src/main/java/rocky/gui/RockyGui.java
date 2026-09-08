@@ -183,7 +183,12 @@ public class RockyGui extends Application {
         case BYE:
             return "Bye. We meet again soon!\n" + DIVIDER;
         case LIST:
+            sortTasks();
             return formatTasks(tasks.asList(), "Rocky remember you have these tasks");
+        case SORT:
+            sortTasks();
+            return "Rocky help you sort the task from earliest to latest!\n"
+                    + formatTasks(tasks.asList(), "Rocky remember you have these tasks");
         case FIND:
             return formatMatchingTasks(tasks.find(command.getArgument()));
         case ADD:
@@ -316,5 +321,11 @@ public class RockyGui extends Application {
         } catch (NumberFormatException exception) {
             return "Please provide a task number, for example: delete 2";
         }
+    }
+
+    /** Sorts and persists the task list. */
+    private void sortTasks() {
+        tasks.sortByDate();
+        storage.save(tasks.asList());
     }
 }
