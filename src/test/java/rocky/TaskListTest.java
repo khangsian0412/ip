@@ -52,6 +52,20 @@ class TaskListTest {
         assertEquals("[T][ ] saved task", tasks.get(0).toString());
     }
 
+    /** Verifies that a null source collection violates the task-list invariant. */
+    @Test
+    void constructor_nullSource_assertionThrown() {
+        assertThrows(AssertionError.class, () -> new TaskList(null));
+    }
+
+    /** Verifies that null tasks cannot be inserted into the task list. */
+    @Test
+    void add_nullTask_assertionThrown() {
+        TaskList tasks = new TaskList();
+
+        assertThrows(AssertionError.class, () -> tasks.add(null));
+    }
+
     /** Verifies that callers cannot modify the list through its persistence view. */
     @Test
     void asList_doesNotAllowExternalModification() {
