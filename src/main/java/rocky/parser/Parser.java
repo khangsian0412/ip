@@ -35,6 +35,10 @@ public class Parser {
          */
         LIST,
         /**
+         * Sorts tasks by their dates.
+         */
+        SORT,
+        /**
          * Marks a task as complete.
          */
         MARK,
@@ -150,6 +154,9 @@ public class Parser {
         }
         if (input.equals("list")) {
             return command(CommandType.LIST);
+        }
+        if (input.equals("sort")) {
+            return command(CommandType.SORT);
         }
         if (input.equals("find")) {
             return error("Use: find KEYWORD", false);

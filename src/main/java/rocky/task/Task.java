@@ -1,7 +1,9 @@
 package rocky.task;
 
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
+import java.util.Optional;
 
 /**
  * Represents the common state and behavior of all task types.
@@ -42,6 +44,12 @@ public abstract class Task {
         return keyword != null && description.toLowerCase(Locale.ROOT)
                 .contains(keyword.toLowerCase(Locale.ROOT));
     }
+
+    /** Returns the date used when tasks are sorted, if this task has one.
+     *
+     * @return the task's deadline or start date, or an empty value for undated tasks.
+     */
+    public abstract Optional<LocalDateTime> getSortDate();
 
     /**
      * Returns the icon representing this task's completion status.

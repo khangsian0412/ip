@@ -28,6 +28,7 @@ class ParserTest {
     void parseSimpleCommands_returnsExpectedCommandTypes() {
         assertEquals(Parser.CommandType.BYE, parser.parse("bye").getType());
         assertEquals(Parser.CommandType.LIST, parser.parse("list").getType());
+        assertEquals(Parser.CommandType.SORT, parser.parse("sort").getType());
         assertEquals(Parser.CommandType.MARK, parser.parse("mark 2").getType());
         assertEquals(Parser.CommandType.UNMARK, parser.parse("unmark 3").getType());
         assertEquals(Parser.CommandType.DELETE, parser.parse("delete 1").getType());

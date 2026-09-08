@@ -71,6 +71,15 @@ public class Ui {
         showDivider();
     }
 
+    /** Displays the confirmation message and the sorted task list.
+     *
+     * @param tasks the sorted task list to display.
+     */
+    public void showSortedTasks(TaskList tasks) {
+        System.out.println("Rocky help you sort the task from earliest to latest!");
+        showTasks(tasks);
+    }
+
     /** Displays tasks whose descriptions match a search keyword.
      *
      * @param matchingTasks the tasks returned by a search.
