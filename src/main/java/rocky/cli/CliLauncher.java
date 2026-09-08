@@ -24,7 +24,6 @@ public class CliLauncher {
                 ui.showBye();
                 return;
             case LIST:
-                sortTasks(tasks);
                 ui.showTasks(tasks);
                 break;
             case SORT:

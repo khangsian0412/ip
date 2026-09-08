@@ -136,9 +136,9 @@ Nice! Rocky marked this task as done:
 ____________________________________________________________
 Rocky remember you have these tasks
 ____________________________________________________________
-1. [D][ ] return book (by: Dec 02 2019, 6:00PM)
-2. [E][ ] project meeting (from: Dec 02 2019, 6:00PM to: Dec 02 2019, 8:00PM)
-3. [T][X] read book
+1. [T][X] read book
+2. [D][ ] return book (by: Dec 02 2019, 6:00PM)
+3. [E][ ] project meeting (from: Dec 02 2019, 6:00PM to: Dec 02 2019, 8:00PM)
 ____________________________________________________________
 Bye. We meet again soon!
 ____________________________________________________________
@@ -168,9 +168,9 @@ Amaze, what a special human being! What rocky do for you?
 ____________________________________________________________
 Rocky remember you have these tasks
 ____________________________________________________________
-1. [D][ ] return book (by: Dec 02 2019, 6:00PM)
-2. [E][ ] project meeting (from: Dec 02 2019, 6:00PM to: Dec 02 2019, 8:00PM)
-3. [T][X] read book
+1. [T][X] read book
+2. [D][ ] return book (by: Dec 02 2019, 6:00PM)
+3. [E][ ] project meeting (from: Dec 02 2019, 6:00PM to: Dec 02 2019, 8:00PM)
 ____________________________________________________________
 Bye. We meet again soon!
 ____________________________________________________________
@@ -200,8 +200,8 @@ Amaze, what a special human being! What rocky do for you?
 ____________________________________________________________
 ____________________________________________________________
 Here are the matching tasks in your list:
-1. [D][ ] return book (by: Dec 02 2019, 6:00PM)
-2. [T][X] read book
+1. [T][X] read book
+2. [D][ ] return book (by: Dec 02 2019, 6:00PM)
 ____________________________________________________________
 Bye. We meet again soon!
 ____________________________________________________________

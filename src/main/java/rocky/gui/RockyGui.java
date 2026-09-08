@@ -183,7 +183,6 @@ public class RockyGui extends Application {
         case BYE:
             return "Bye. We meet again soon!\n" + DIVIDER;
         case LIST:
-            sortTasks();
             return formatTasks(tasks.asList(), "Rocky remember you have these tasks");
         case SORT:
             sortTasks();
