@@ -176,6 +176,7 @@ public class Storage {
          * @param hasTime whether the original input included a time
          */
         ParsedDateTime(LocalDateTime value, boolean hasTime) {
+            assert value != null : "Stored date-time values must not be null";
             this.value = value;
             this.hasTime = hasTime;
         }
