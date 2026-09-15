@@ -124,7 +124,7 @@ public class RockyGui extends Application {
 
     /** Adds a response from Rocky to the conversation feed. */
     private void addRockyMessage(String message) {
-        messageList.getChildren().add(createMessage("ROCKY · SYSTEM", message, rockyAvatar, false));
+        messageList.getChildren().add(createMessage("ROCKY · Your deep space friend :D", message, rockyAvatar, false));
         scrollToLatestMessage();
     }
 
