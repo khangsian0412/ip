@@ -7,3 +7,6 @@ T | 0 | have fun
 T | 0 | eat lunch
 T | 0 | eat lunch
 T | 0 | eat lunch
+T | 1 | say hi to rocky
+T | 0 | have lunch
+T | 0 | love

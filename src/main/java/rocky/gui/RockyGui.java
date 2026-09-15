@@ -13,9 +13,15 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundImage;
+import javafx.scene.layout.BackgroundPosition;
+import javafx.scene.layout.BackgroundRepeat;
+import javafx.scene.layout.BackgroundSize;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import rocky.TaskList;
@@ -29,13 +35,12 @@ public class RockyGui extends Application {
     private static final int CONTENT_SPACING = 12;
     private static final int COMMAND_BAR_SPACING = 8;
     private static final int MESSAGE_SPACING = 3;
-    private static final int AVATAR_SIZE = 44;
+    private static final int AVATAR_SIZE = 80;
     private static final int USER_MESSAGE_WIDTH = 220;
-    private static final int ROCKY_MESSAGE_WIDTH = 560;
+    private static final int ROCKY_MESSAGE_WIDTH = 480;
     private static final int WINDOW_WIDTH = 620;
     private static final int WINDOW_HEIGHT = 460;
     private static final double LATEST_MESSAGE_SCROLL_POSITION = 1.0;
-    private static final String DIVIDER = "____________________________________________________________";
     private static final String TASK_FILE_PATH = "./data/rocky.txt";
     private final Storage storage = new Storage(TASK_FILE_PATH);
     private final Parser parser = new Parser();
@@ -43,8 +48,9 @@ public class RockyGui extends Application {
     private final VBox messageList = new VBox(MESSAGE_LIST_SPACING);
     private final ScrollPane conversation = new ScrollPane(messageList);
     private final TextField commandInput = new TextField();
-    private final Image userAvatar = loadAvatar("/rocky/gui/user-avatar.jpeg");
-    private final Image rockyAvatar = loadAvatar("/rocky/gui/rocky-avatar.jpeg");
+    private final Image chatBackground = loadGuiImage("/rocky/gui/chat-background.jpg");
+    private final Image userAvatar = loadGuiImage("/rocky/gui/user-avatar.jpeg");
+    private final Image rockyAvatar = loadGuiImage("/rocky/gui/rocky-avatar.jpeg");
 
     /** Creates the JavaFX application. */
     public RockyGui() {
@@ -61,8 +67,10 @@ public class RockyGui extends Application {
 
         messageList.setPadding(new Insets(12));
         messageList.setFillWidth(true);
+        messageList.setStyle("-fx-background-color: rgba(255, 255, 255, 0.18);");
         conversation.setFitToWidth(true);
         conversation.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        conversation.getStyleClass().add("conversation-scroll-pane");
         messageList.heightProperty().addListener((observable, oldHeight, newHeight) ->
                 Platform.runLater(() -> conversation.setVvalue(LATEST_MESSAGE_SCROLL_POSITION)));
         addRockyMessage(formatWelcome());
@@ -76,12 +84,16 @@ public class RockyGui extends Application {
         HBox commandBar = new HBox(COMMAND_BAR_SPACING, commandInput, sendButton);
         HBox.setHgrow(commandInput, Priority.ALWAYS);
 
-        VBox content = new VBox(CONTENT_SPACING, title, conversation, commandBar);
+        StackPane conversationArea = new StackPane(conversation);
+        conversationArea.setBackground(createChatBackground());
+
+        VBox content = new VBox(CONTENT_SPACING, title, conversationArea, commandBar);
         content.setPadding(new Insets(16));
-        VBox.setVgrow(conversation, Priority.ALWAYS);
+        VBox.setVgrow(conversationArea, Priority.ALWAYS);
 
         BorderPane root = new BorderPane(content);
         Scene scene = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
+        scene.getStylesheets().add(RockyGui.class.getResource("/rocky/gui/rocky-gui.css").toExternalForm());
         stage.setTitle("Rocky Task Manager");
         stage.setScene(scene);
         stage.show();
@@ -106,13 +118,13 @@ public class RockyGui extends Application {
 
     /** Adds a command from the user to the conversation feed. */
     private void addUserMessage(String message) {
-        messageList.getChildren().add(createMessage("You", message, userAvatar, true));
+        messageList.getChildren().add(createMessage("YOU", message, userAvatar, true));
         scrollToLatestMessage();
     }
 
     /** Adds a response from Rocky to the conversation feed. */
     private void addRockyMessage(String message) {
-        messageList.getChildren().add(createMessage("Rocky", message, rockyAvatar, false));
+        messageList.getChildren().add(createMessage("ROCKY · Your deep space friend :D", message, rockyAvatar, false));
         scrollToLatestMessage();
     }
 
@@ -127,22 +139,21 @@ public class RockyGui extends Application {
         avatarView.setPreserveRatio(true);
 
         Label senderLabel = new Label(sender);
-        senderLabel.setStyle("-fx-font-weight: bold; -fx-text-fill: #4b5563;");
+        senderLabel.getStyleClass().addAll("sender-label",
+                isUser ? "user-sender-label" : "rocky-sender-label");
 
         Label messageLabel = new Label(message);
         messageLabel.setWrapText(true);
         messageLabel.setMaxWidth(Double.MAX_VALUE);
+        messageLabel.getStyleClass().addAll("message-content",
+                isUser ? "user-message-content" : "rocky-message-content");
 
         VBox messageBubble = new VBox(MESSAGE_SPACING, senderLabel, messageLabel);
         int messageWidth = isUser ? USER_MESSAGE_WIDTH : ROCKY_MESSAGE_WIDTH;
         messageBubble.setPrefWidth(messageWidth);
         messageBubble.setMaxWidth(messageWidth);
-        messageBubble.setPadding(new Insets(10));
-        messageBubble.setStyle(isUser
-                ? "-fx-background-color: #dbeafe; -fx-background-radius: 12;"
-                : "-fx-background-color: #fff1cc; -fx-background-radius: 12;"
-                + "-fx-border-color: #c58b1b; -fx-border-width: 1.5;"
-                + "-fx-border-radius: 12; -fx-effect: dropshadow(gaussian, #999999, 4, 0.2, 0, 1);");
+        messageBubble.getStyleClass().addAll("message-bubble",
+                isUser ? "user-message-bubble" : "rocky-message-bubble");
         HBox messageRow = new HBox(COMMAND_BAR_SPACING);
         messageRow.setAlignment(Pos.TOP_RIGHT);
         if (isUser) {
@@ -164,10 +175,18 @@ public class RockyGui extends Application {
         });
     }
 
-    /** Loads a bundled avatar image and reports a configuration error clearly. */
-    private Image loadAvatar(String resourcePath) {
+    /** Creates the image background that covers the conversation area. */
+    private Background createChatBackground() {
+        BackgroundSize size = new BackgroundSize(100, 100, true, true, false, true);
+        BackgroundImage image = new BackgroundImage(chatBackground, BackgroundRepeat.NO_REPEAT,
+                BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, size);
+        return new Background(image);
+    }
+
+    /** Loads a bundled GUI image and reports a configuration error clearly. */
+    private Image loadGuiImage(String resourcePath) {
         if (RockyGui.class.getResource(resourcePath) == null) {
-            throw new IllegalStateException("Missing GUI avatar resource: " + resourcePath);
+            throw new IllegalStateException("Missing GUI image resource: " + resourcePath);
         }
         return new Image(RockyGui.class.getResource(resourcePath).toExternalForm());
     }
@@ -181,7 +200,7 @@ public class RockyGui extends Application {
         assert command != null : "GUI must execute a parsed command";
         switch (command.getType()) {
         case BYE:
-            return "Bye. We meet again soon!\n" + DIVIDER;
+            return "Bye. We meet again soon!";
         case LIST:
             return formatTasks(tasks.asList(), "Rocky remember you have these tasks");
         case SORT:
@@ -217,25 +236,23 @@ public class RockyGui extends Application {
      */
     private String formatTasks(List<Task> taskList, String heading) {
         StringBuilder result = new StringBuilder(heading);
-        result.append("\n").append(DIVIDER);
         if (taskList.isEmpty()) {
             result.append("\nRocky don't see anything!");
         } else {
             appendNumberedTasks(result, taskList);
         }
-        return result.append("\n").append(DIVIDER).toString();
+        return result.toString();
     }
 
     /** Formats the response for a task search using the console UI's wording. */
     private String formatMatchingTasks(List<Task> matchingTasks) {
-        StringBuilder result = new StringBuilder(DIVIDER)
-                .append("\nHere are the matching tasks in your list:");
+        StringBuilder result = new StringBuilder("Here are the matching tasks in your list:");
         if (matchingTasks.isEmpty()) {
             result.append("\nRocky don't see any matching tasks!");
         } else {
             appendNumberedTasks(result, matchingTasks);
         }
-        return result.append("\n").append(DIVIDER).toString();
+        return result.toString();
     }
 
     /** Appends numbered tasks to a response under construction. */
@@ -247,30 +264,25 @@ public class RockyGui extends Application {
 
     /** Formats Rocky's task-added confirmation. */
     private String formatTaskAdded(Task task, int taskCount) {
-        return DIVIDER + "\nAmaze! Rocky add this to task...:\n" + task
-                + "\nRocky see " + taskCount + " tasks in the list.\n" + DIVIDER;
+        return "Amaze! Rocky add this to task...:\n" + task
+                + "\nRocky see " + taskCount + " tasks in the list.";
     }
 
-    /** Formats a parser error with the divider behavior used by the console UI. */
+    /** Formats a parser error for display in Rocky's chat message. */
     private String formatError(Parser.Command command) {
-        if (command.showWithDivider()) {
-            return DIVIDER + "\n" + command.getMessage() + "\n" + DIVIDER;
-        }
         return command.getMessage();
     }
 
     /** Formats Rocky's initial welcome message. */
     private String formatWelcome() {
-        return DIVIDER + "\n"
-                + " ____             _          \n"
+        return " ____             _          \n"
                 + "|  _ \\ ___   ___| | ___   _ \n"
                 + "| |_) / _ \\ / __| |/ / | | |\n"
                 + "|  _ < (_) | (__|   <| |_| |\n"
                 + "|_| \\_\\___/ \\___|_|\\_\\__, |\n"
                 + "                         |___/\n\n"
                 + "Hello! I Rocky.\n"
-                + "Amaze, what a special human being! What rocky do for you?\n"
-                + DIVIDER;
+                + "Amaze, what a special human being! What rocky do for you?";
     }
 
     /** Updates a task's completion status and persists the change.
@@ -292,10 +304,9 @@ public class RockyGui extends Application {
                 task.markAsNotDone();
             }
             storage.save(tasks.asList());
-            return DIVIDER + "\n"
-                    + (completed ? "Nice! Rocky marked this task as done:"
+            return (completed ? "Nice! Rocky marked this task as done:"
                     : "Oh No! Rocky marked this task as not done yet:")
-                    + "\n" + task + "\n" + DIVIDER;
+                    + "\n" + task;
         } catch (NumberFormatException exception) {
             return "Please provide a task number, for example: " + command + " 2";
         }
@@ -315,8 +326,7 @@ public class RockyGui extends Application {
             Task task = tasks.get(taskIndex);
             tasks.delete(taskIndex);
             storage.save(tasks.asList());
-            return DIVIDER + "\nRocky will remove that annoying task for you!:\n"
-                    + task + "\n" + DIVIDER;
+            return "Rocky will remove that annoying task for you!:\n" + task;
         } catch (NumberFormatException exception) {
             return "Please provide a task number, for example: delete 2";
         }
