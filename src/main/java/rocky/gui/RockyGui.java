@@ -41,7 +41,6 @@ public class RockyGui extends Application {
     private static final int WINDOW_WIDTH = 620;
     private static final int WINDOW_HEIGHT = 460;
     private static final double LATEST_MESSAGE_SCROLL_POSITION = 1.0;
-    private static final String DIVIDER = "____________________________________________________________";
     private static final String TASK_FILE_PATH = "./data/rocky.txt";
     private final Storage storage = new Storage(TASK_FILE_PATH);
     private final Parser parser = new Parser();
@@ -201,7 +200,7 @@ public class RockyGui extends Application {
         assert command != null : "GUI must execute a parsed command";
         switch (command.getType()) {
         case BYE:
-            return "Bye. We meet again soon!\n" + DIVIDER;
+            return "Bye. We meet again soon!";
         case LIST:
             return formatTasks(tasks.asList(), "Rocky remember you have these tasks");
         case SORT:
@@ -237,25 +236,23 @@ public class RockyGui extends Application {
      */
     private String formatTasks(List<Task> taskList, String heading) {
         StringBuilder result = new StringBuilder(heading);
-        result.append("\n").append(DIVIDER);
         if (taskList.isEmpty()) {
             result.append("\nRocky don't see anything!");
         } else {
             appendNumberedTasks(result, taskList);
         }
-        return result.append("\n").append(DIVIDER).toString();
+        return result.toString();
     }
 
     /** Formats the response for a task search using the console UI's wording. */
     private String formatMatchingTasks(List<Task> matchingTasks) {
-        StringBuilder result = new StringBuilder(DIVIDER)
-                .append("\nHere are the matching tasks in your list:");
+        StringBuilder result = new StringBuilder("Here are the matching tasks in your list:");
         if (matchingTasks.isEmpty()) {
             result.append("\nRocky don't see any matching tasks!");
         } else {
             appendNumberedTasks(result, matchingTasks);
         }
-        return result.append("\n").append(DIVIDER).toString();
+        return result.toString();
     }
 
     /** Appends numbered tasks to a response under construction. */
@@ -267,30 +264,25 @@ public class RockyGui extends Application {
 
     /** Formats Rocky's task-added confirmation. */
     private String formatTaskAdded(Task task, int taskCount) {
-        return DIVIDER + "\nAmaze! Rocky add this to task...:\n" + task
-                + "\nRocky see " + taskCount + " tasks in the list.\n" + DIVIDER;
+        return "Amaze! Rocky add this to task...:\n" + task
+                + "\nRocky see " + taskCount + " tasks in the list.";
     }
 
-    /** Formats a parser error with the divider behavior used by the console UI. */
+    /** Formats a parser error for display in Rocky's chat message. */
     private String formatError(Parser.Command command) {
-        if (command.showWithDivider()) {
-            return DIVIDER + "\n" + command.getMessage() + "\n" + DIVIDER;
-        }
         return command.getMessage();
     }
 
     /** Formats Rocky's initial welcome message. */
     private String formatWelcome() {
-        return DIVIDER + "\n"
-                + " ____             _          \n"
+        return " ____             _          \n"
                 + "|  _ \\ ___   ___| | ___   _ \n"
                 + "| |_) / _ \\ / __| |/ / | | |\n"
                 + "|  _ < (_) | (__|   <| |_| |\n"
                 + "|_| \\_\\___/ \\___|_|\\_\\__, |\n"
                 + "                         |___/\n\n"
                 + "Hello! I Rocky.\n"
-                + "Amaze, what a special human being! What rocky do for you?\n"
-                + DIVIDER;
+                + "Amaze, what a special human being! What rocky do for you?";
     }
 
     /** Updates a task's completion status and persists the change.
@@ -312,10 +304,9 @@ public class RockyGui extends Application {
                 task.markAsNotDone();
             }
             storage.save(tasks.asList());
-            return DIVIDER + "\n"
-                    + (completed ? "Nice! Rocky marked this task as done:"
+            return (completed ? "Nice! Rocky marked this task as done:"
                     : "Oh No! Rocky marked this task as not done yet:")
-                    + "\n" + task + "\n" + DIVIDER;
+                    + "\n" + task;
         } catch (NumberFormatException exception) {
             return "Please provide a task number, for example: " + command + " 2";
         }
@@ -335,8 +326,7 @@ public class RockyGui extends Application {
             Task task = tasks.get(taskIndex);
             tasks.delete(taskIndex);
             storage.save(tasks.asList());
-            return DIVIDER + "\nRocky will remove that annoying task for you!:\n"
-                    + task + "\n" + DIVIDER;
+            return "Rocky will remove that annoying task for you!:\n" + task;
         } catch (NumberFormatException exception) {
             return "Please provide a task number, for example: delete 2";
         }
