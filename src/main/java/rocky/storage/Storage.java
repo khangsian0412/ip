@@ -171,7 +171,8 @@ public class Storage {
         ParsedDateTime startDateTime = parseDateTime(fields[3]);
         ParsedDateTime endDateTime = parseDateTime(fields[4]);
         if (startDateTime == null || endDateTime == null
-                || startDateTime.hasTime != endDateTime.hasTime) {
+                || startDateTime.hasTime != endDateTime.hasTime
+                || endDateTime.value.isBefore(startDateTime.value)) {
             return null;
         }
         return startDateTime.hasTime ? new Event(fields[2], startDateTime.value, endDateTime.value)

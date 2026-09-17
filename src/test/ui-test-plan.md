@@ -89,6 +89,38 @@ Bye. We meet again soon!
 ____________________________________________________________
 ```
 
+## Reject an event that ends before it starts
+**Aim:** Verify that Rocky rejects an event whose end date and time precede its start.
+
+**Input:**
+```text
+event project meeting /from 2019-12-02 1800 /to 2019-12-02 1700
+list
+bye
+```
+
+**Expected output:**
+```text
+____________________________________________________________
+ ____             _
+|  _ \ ___   ___| | ___   _
+| |_) / _ \ / __| |/ / | | |
+|  _ < (_) | (__|   <| |_| |
+|_| \_\___/ \___|_|\_\__, |
+                         |___/
+
+Hello! I Rocky.
+Amaze, what a special human being! What rocky do for you?
+____________________________________________________________
+The event end date/time cannot be earlier than its start date/time.
+Rocky remember you have these tasks
+____________________________________________________________
+Rocky don't see anything!
+____________________________________________________________
+Bye. We meet again soon!
+____________________________________________________________
+```
+
 ## Add, complete, and list different task types
 **Aim:** Verify that Rocky creates to-do, deadline, and event tasks, marks a task as done, and displays each task through its type-specific format.
 

@@ -88,6 +88,7 @@ class StorageTest {
                 "D | 0 | bad date | 2019-99-99",
                 "D | 0 | missing date",
                 "E | 0 | mixed formats | 2019-12-02 | 2019-12-03 1800",
+                "E | 0 | earlier end | 2019-12-03 | 2019-12-02",
                 "E | 0 | missing end | 2019-12-02",
                 "X | 0 | unsupported type",
                 "T | 0 | another valid task",

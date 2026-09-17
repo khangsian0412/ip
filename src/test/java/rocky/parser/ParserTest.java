@@ -179,6 +179,40 @@ class ParserTest {
                         + " to: Dec 02 2019, 8:00PM)", command.getTask().toString());
     }
 
+    /** Verifies that an event ending before its start date is rejected. */
+    @Test
+    void parse_eventWithEarlierEndDate_returnsDateOrderError() {
+        Parser.Command command = parser.parse(
+                "event holiday /from 2019-12-03 /to 2019-12-02");
+
+        assertEquals(Parser.CommandType.ERROR, command.getType());
+        assertEquals("The event end date/time cannot be earlier than its start date/time.",
+                command.getMessage());
+        assertNull(command.getTask());
+    }
+
+    /** Verifies that an event ending before its start time is rejected. */
+    @Test
+    void parse_eventWithEarlierEndTime_returnsDateOrderError() {
+        Parser.Command command = parser.parse(
+                "event meeting /from 2019-12-02 1800 /to 2019-12-02 1700");
+
+        assertEquals(Parser.CommandType.ERROR, command.getType());
+        assertEquals("The event end date/time cannot be earlier than its start date/time.",
+                command.getMessage());
+        assertNull(command.getTask());
+    }
+
+    /** Verifies that an event may start and end at the same date and time. */
+    @Test
+    void parse_eventWithEqualStartAndEnd_createsEvent() {
+        Parser.Command command = parser.parse(
+                "event appointment /from 2019-12-02 1800 /to 2019-12-02 1800");
+
+        assertEquals(Parser.CommandType.ADD, command.getType());
+        assertInstanceOf(Event.class, command.getTask());
+    }
+
     /** Verifies that mixed date and date-time endpoints are rejected. */
     @Test
     void parse_eventWithMixedDateFormats_returnsFormatError() {

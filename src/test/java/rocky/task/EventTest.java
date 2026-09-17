@@ -1,6 +1,7 @@
 package rocky.task;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -33,6 +34,20 @@ class EventTest {
         assertEquals("E | 0 | meeting | 2025-03-05T18:30 | 2025-03-05T20:00",
                 event.toStorageString());
         assertEquals(from, event.getSortDate().orElseThrow());
+    }
+
+    /** Verifies that events cannot be constructed with an end before their start. */
+    @Test
+    void constructor_endBeforeStart_throwsIllegalArgumentException() {
+        LocalDate startDate = LocalDate.of(2025, 3, 7);
+        LocalDate endDate = LocalDate.of(2025, 3, 5);
+        LocalDateTime startDateTime = LocalDateTime.of(2025, 3, 5, 20, 0);
+        LocalDateTime endDateTime = LocalDateTime.of(2025, 3, 5, 18, 30);
+
+        assertThrows(IllegalArgumentException.class,
+                () -> new Event("holiday", startDate, endDate));
+        assertThrows(IllegalArgumentException.class,
+                () -> new Event("meeting", startDateTime, endDateTime));
     }
 
     /** Verifies that completing an event updates display and storage status. */

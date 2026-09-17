@@ -237,6 +237,9 @@ public class Parser {
         if (startDateTime.hasTime != endDateTime.hasTime) {
             return error("Use the same date or date-time format for both event dates.", false);
         }
+        if (endDateTime.value.isBefore(startDateTime.value)) {
+            return error("The event end date/time cannot be earlier than its start date/time.", false);
+        }
         Task task = startDateTime.hasTime ? new Event(description, startDateTime.value, endDateTime.value)
                 : new Event(description, startDateTime.value.toLocalDate(), endDateTime.value.toLocalDate());
         return add(task);

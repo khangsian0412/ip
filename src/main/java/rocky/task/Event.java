@@ -24,6 +24,7 @@ public class Event extends Task {
         super(description);
         this.startDateTime = startDate.atStartOfDay();
         this.endDateTime = endDate.atStartOfDay();
+        validateDateRange(startDateTime, endDateTime);
         this.hasScheduledTimes = false;
     }
 
@@ -38,7 +39,15 @@ public class Event extends Task {
         super(description);
         this.startDateTime = startDateTime;
         this.endDateTime = endDateTime;
+        validateDateRange(startDateTime, endDateTime);
         this.hasScheduledTimes = true;
+    }
+
+    /** Rejects an event whose end precedes its start. */
+    private static void validateDateRange(LocalDateTime startDateTime, LocalDateTime endDateTime) {
+        if (endDateTime.isBefore(startDateTime)) {
+            throw new IllegalArgumentException("Event end date/time cannot be earlier than its start date/time.");
+        }
     }
 
     /** Returns the event start used for chronological sorting.
