@@ -277,11 +277,12 @@ public class RockyGui extends Application {
 
     /** Formats Rocky's initial welcome message. */
     private String formatWelcome() {
-        return "RRRR    OOO    CCCC  K  K  Y   Y\n"
-                + "R   R  O   O  C      K K    Y Y\n"
-                + "RRRR   O   O  C      KK      Y\n"
-                + "R  R   O   O  C      K K     Y\n"
-                + "R   R   OOO    CCCC  K  K    Y\n\n"
+        return " ____             _\n"
+                + "|  _ \\ ___   ___| | ___   _\n"
+                + "| |_) / _ \\ / __| |/ / | | |\n"
+                + "|  _ < (_) | (__|   <| |_| |\n"
+                + "|_| \\_\\___/ \\___|_|\\_\\__, |\n"
+                + "                         |___/\n\n"
                 + "Hello! I Rocky.\n"
                 + "Amaze, what a special human being! What rocky do for you?";
     }

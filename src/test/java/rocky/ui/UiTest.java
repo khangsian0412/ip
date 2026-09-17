@@ -64,7 +64,7 @@ class UiTest {
 
         String printed = capturedOutput();
         assertTrue(printed.startsWith(DIVIDER));
-        assertTrue(printed.contains("R   R   OOO    CCCC  K  K    Y"));
+        assertTrue(printed.contains("|_| \\_\\___/ \\___|_|\\_\\__, |"));
         assertTrue(printed.contains("Hello! I Rocky."));
         assertTrue(printed.contains("Amaze, what a special human being! What rocky do for you?"));
         assertTrue(printed.endsWith("Bye. We meet again soon!" + System.lineSeparator() + DIVIDER

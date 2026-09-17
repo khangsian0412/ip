@@ -12,11 +12,12 @@ bye
 **Expected output:**
 ```text
 ____________________________________________________________
-RRRR    OOO    CCCC  K  K  Y   Y
-R   R  O   O  C      K K    Y Y
-RRRR   O   O  C      KK      Y
-R  R   O   O  C      K K     Y
-R   R   OOO    CCCC  K  K    Y
+ ____             _
+|  _ \ ___   ___| | ___   _
+| |_) / _ \ / __| |/ / | | |
+|  _ < (_) | (__|   <| |_| |
+|_| \_\___/ \___|_|\_\__, |
+                         |___/
 
 Hello! I Rocky.
 Amaze, what a special human being! What rocky do for you?
@@ -38,11 +39,12 @@ bye
 **Expected output:**
 ```text
 ____________________________________________________________
-RRRR    OOO    CCCC  K  K  Y   Y
-R   R  O   O  C      K K    Y Y
-RRRR   O   O  C      KK      Y
-R  R   O   O  C      K K     Y
-R   R   OOO    CCCC  K  K    Y
+ ____             _
+|  _ \ ___   ___| | ___   _
+| |_) / _ \ / __| |/ / | | |
+|  _ < (_) | (__|   <| |_| |
+|_| \_\___/ \___|_|\_\__, |
+                         |___/
 
 Hello! I Rocky.
 Amaze, what a special human being! What rocky do for you?
@@ -68,11 +70,12 @@ bye
 **Expected output:**
 ```text
 ____________________________________________________________
-RRRR    OOO    CCCC  K  K  Y   Y
-R   R  O   O  C      K K    Y Y
-RRRR   O   O  C      KK      Y
-R  R   O   O  C      K K     Y
-R   R   OOO    CCCC  K  K    Y
+ ____             _
+|  _ \ ___   ___| | ___   _
+| |_) / _ \ / __| |/ / | | |
+|  _ < (_) | (__|   <| |_| |
+|_| \_\___/ \___|_|\_\__, |
+                         |___/
 
 Hello! I Rocky.
 Amaze, what a special human being! What rocky do for you?
@@ -102,11 +105,12 @@ bye
 **Expected output:**
 ```text
 ____________________________________________________________
-RRRR    OOO    CCCC  K  K  Y   Y
-R   R  O   O  C      K K    Y Y
-RRRR   O   O  C      KK      Y
-R  R   O   O  C      K K     Y
-R   R   OOO    CCCC  K  K    Y
+ ____             _
+|  _ \ ___   ___| | ___   _
+| |_) / _ \ / __| |/ / | | |
+|  _ < (_) | (__|   <| |_| |
+|_| \_\___/ \___|_|\_\__, |
+                         |___/
 
 Hello! I Rocky.
 Amaze, what a special human being! What rocky do for you?
@@ -152,11 +156,12 @@ bye
 **Expected output:**
 ```text
 ____________________________________________________________
-RRRR    OOO    CCCC  K  K  Y   Y
-R   R  O   O  C      K K    Y Y
-RRRR   O   O  C      KK      Y
-R  R   O   O  C      K K     Y
-R   R   OOO    CCCC  K  K    Y
+ ____             _
+|  _ \ ___   ___| | ___   _
+| |_) / _ \ / __| |/ / | | |
+|  _ < (_) | (__|   <| |_| |
+|_| \_\___/ \___|_|\_\__, |
+                         |___/
 
 Hello! I Rocky.
 Amaze, what a special human being! What rocky do for you?
@@ -183,11 +188,12 @@ bye
 **Expected output:**
 ```text
 ____________________________________________________________
-RRRR    OOO    CCCC  K  K  Y   Y
-R   R  O   O  C      K K    Y Y
-RRRR   O   O  C      KK      Y
-R  R   O   O  C      K K     Y
-R   R   OOO    CCCC  K  K    Y
+ ____             _
+|  _ \ ___   ___| | ___   _
+| |_) / _ \ / __| |/ / | | |
+|  _ < (_) | (__|   <| |_| |
+|_| \_\___/ \___|_|\_\__, |
+                         |___/
 
 Hello! I Rocky.
 Amaze, what a special human being! What rocky do for you?
@@ -215,11 +221,12 @@ bye
 **Expected output:**
 ```text
 ____________________________________________________________
-RRRR    OOO    CCCC  K  K  Y   Y
-R   R  O   O  C      K K    Y Y
-RRRR   O   O  C      KK      Y
-R  R   O   O  C      K K     Y
-R   R   OOO    CCCC  K  K    Y
+ ____             _
+|  _ \ ___   ___| | ___   _
+| |_) / _ \ / __| |/ / | | |
+|  _ < (_) | (__|   <| |_| |
+|_| \_\___/ \___|_|\_\__, |
+                         |___/
 
 Hello! I Rocky.
 Amaze, what a special human being! What rocky do for you?
