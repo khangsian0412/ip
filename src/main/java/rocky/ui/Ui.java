@@ -25,12 +25,11 @@ public class Ui {
      * Displays Rocky's welcome message.
      */
     public void showWelcome() {
-        String banner = " ____             _          \n"
-                + "|  _ \\ ___   ___| | ___   _ \n"
-                + "| |_) / _ \\ / __| |/ / | | |\n"
-                + "|  _ < (_) | (__|   <| |_| |\n"
-                + "|_| \\_\\___/ \\___|_|\\_\\__, |\n"
-                + "                         |___/\n";
+        String banner = "RRRR    OOO    CCCC  K  K  Y   Y\n"
+                + "R   R  O   O  C      K K    Y Y\n"
+                + "RRRR   O   O  C      KK      Y\n"
+                + "R  R   O   O  C      K K     Y\n"
+                + "R   R   OOO    CCCC  K  K    Y\n";
         showDivider();
         System.out.println(banner);
         System.out.println("Hello! I Rocky.");
