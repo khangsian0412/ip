@@ -42,6 +42,8 @@ public class RockyGui extends Application {
     private static final int WINDOW_HEIGHT = 460;
     private static final double LATEST_MESSAGE_SCROLL_POSITION = 1.0;
     private static final String TASK_FILE_PATH = "./data/rocky.txt";
+    private static final String USER_SENDER_NAME = "YOU";
+    private static final String ROCKY_SENDER_NAME = "ROCKY · Your deep space friend :D";
     private final Storage storage = new Storage(TASK_FILE_PATH);
     private final Parser parser = new Parser();
     private final TaskList tasks = new TaskList(storage.load());
@@ -118,13 +120,13 @@ public class RockyGui extends Application {
 
     /** Adds a command from the user to the conversation feed. */
     private void addUserMessage(String message) {
-        messageList.getChildren().add(createMessage("YOU", message, userAvatar, true));
+        messageList.getChildren().add(createMessage(USER_SENDER_NAME, message, userAvatar, true));
         scrollToLatestMessage();
     }
 
     /** Adds a response from Rocky to the conversation feed. */
     private void addRockyMessage(String message) {
-        messageList.getChildren().add(createMessage("ROCKY · Your deep space friend :D", message, rockyAvatar, false));
+        messageList.getChildren().add(createMessage(ROCKY_SENDER_NAME, message, rockyAvatar, false));
         scrollToLatestMessage();
     }
 
