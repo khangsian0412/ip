@@ -9,31 +9,31 @@ import java.util.Optional;
  * Represents a task that must be completed by a specified time.
  */
 public class Deadline extends Task {
-    private final LocalDateTime by;
-    private final boolean hasTime;
+    private final LocalDateTime dueDateTime;
+    private final boolean hasDueTime;
 
     /**
      * Creates a deadline task with a description and due-time text.
      *
      * @param description the text describing the task
-     * @param by the date by which the task is due
+     * @param dueDate the date by which the task is due
      */
-    public Deadline(String description, LocalDate by) {
+    public Deadline(String description, LocalDate dueDate) {
         super(description);
-        this.by = by.atStartOfDay();
-        this.hasTime = false;
+        this.dueDateTime = dueDate.atStartOfDay();
+        this.hasDueTime = false;
     }
 
     /**
      * Creates a deadline with a date and time.
      *
      * @param description the text describing the task
-     * @param by the date and time by which the task is due
+     * @param dueDateTime the date and time by which the task is due
      */
-    public Deadline(String description, LocalDateTime by) {
+    public Deadline(String description, LocalDateTime dueDateTime) {
         super(description);
-        this.by = by;
-        this.hasTime = true;
+        this.dueDateTime = dueDateTime;
+        this.hasDueTime = true;
     }
 
     /** Returns the deadline used for chronological sorting.
@@ -42,7 +42,7 @@ public class Deadline extends Task {
      */
     @Override
     public Optional<LocalDateTime> getSortDate() {
-        return Optional.of(by);
+        return Optional.of(dueDateTime);
     }
 
     /**
@@ -52,9 +52,9 @@ public class Deadline extends Task {
      */
     @Override
     public String toString() {
-        DateTimeFormatter format = hasTime ? DISPLAY_DATE_TIME_FORMAT : DISPLAY_DATE_FORMAT;
+        DateTimeFormatter format = hasDueTime ? DISPLAY_DATE_TIME_FORMAT : DISPLAY_DATE_FORMAT;
         return "[D][" + getStatusIcon() + "] " + getDescription()
-                + " (by: " + by.format(format) + ")";
+                + " (by: " + dueDateTime.format(format) + ")";
     }
 
     /**
@@ -64,7 +64,7 @@ public class Deadline extends Task {
      */
     @Override
     public String toStorageString() {
-        String storedDate = hasTime ? by.toString() : by.toLocalDate().toString();
+        String storedDate = hasDueTime ? dueDateTime.toString() : dueDateTime.toLocalDate().toString();
         return "D | " + getStatusValue() + " | " + getDescription() + " | " + storedDate;
     }
 }

@@ -155,12 +155,12 @@ public class Storage {
         if (fields.length != 4 || fields[2].isEmpty()) {
             return null;
         }
-        ParsedDateTime by = parseDateTime(fields[3]);
-        if (by == null) {
+        ParsedDateTime dueDateTime = parseDateTime(fields[3]);
+        if (dueDateTime == null) {
             return null;
         }
-        return by.hasTime ? new Deadline(fields[2], by.value)
-                : new Deadline(fields[2], by.value.toLocalDate());
+        return dueDateTime.hasTime ? new Deadline(fields[2], dueDateTime.value)
+                : new Deadline(fields[2], dueDateTime.value.toLocalDate());
     }
 
     /** Parses a stored event record. */

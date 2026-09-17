@@ -194,20 +194,21 @@ public class Parser {
      * @return the parsed command.
      */
     private Command parseDeadline(String input) {
-        int byIndex = input.indexOf(" /by ");
-        if (byIndex < 0) {
+        int byMarkerIndex = input.indexOf(" /by ");
+        if (byMarkerIndex < 0) {
             return error("Use: deadline DESCRIPTION /by DATE_OR_TIME", false);
         }
-        String description = input.substring("deadline".length(), byIndex).trim();
+        String description = input.substring("deadline".length(), byMarkerIndex).trim();
         if (description.isEmpty()) {
             return missingDescription();
         }
-        ParsedDateTime by = parseDateTime(input.substring(byIndex + " /by ".length()).trim());
-        if (by == null) {
+        ParsedDateTime dueDateTime = parseDateTime(
+                input.substring(byMarkerIndex + " /by ".length()).trim());
+        if (dueDateTime == null) {
             return dateError();
         }
-        Task task = by.hasTime ? new Deadline(description, by.value)
-                : new Deadline(description, by.value.toLocalDate());
+        Task task = dueDateTime.hasTime ? new Deadline(description, dueDateTime.value)
+                : new Deadline(description, dueDateTime.value.toLocalDate());
         return add(task);
     }
 
