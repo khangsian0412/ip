@@ -9,36 +9,36 @@ import java.util.Optional;
  * Represents a task that occurs between a start and end time.
  */
 public class Event extends Task {
-    private final LocalDateTime from;
-    private final LocalDateTime to;
-    private final boolean hasTime;
+    private final LocalDateTime startDateTime;
+    private final LocalDateTime endDateTime;
+    private final boolean hasScheduledTimes;
 
     /**
      * Creates an event task with a description, start-time text, and end-time text.
      *
      * @param description the text describing the event
-     * @param from the date on which the event starts
-     * @param to the date on which the event ends
+     * @param startDate the date on which the event starts
+     * @param endDate the date on which the event ends
      */
-    public Event(String description, LocalDate from, LocalDate to) {
+    public Event(String description, LocalDate startDate, LocalDate endDate) {
         super(description);
-        this.from = from.atStartOfDay();
-        this.to = to.atStartOfDay();
-        this.hasTime = false;
+        this.startDateTime = startDate.atStartOfDay();
+        this.endDateTime = endDate.atStartOfDay();
+        this.hasScheduledTimes = false;
     }
 
     /**
      * Creates an event with start and end dates and times.
      *
      * @param description the text describing the event
-     * @param from the date and time at which the event starts
-     * @param to the date and time at which the event ends
+     * @param startDateTime the date and time at which the event starts
+     * @param endDateTime the date and time at which the event ends
      */
-    public Event(String description, LocalDateTime from, LocalDateTime to) {
+    public Event(String description, LocalDateTime startDateTime, LocalDateTime endDateTime) {
         super(description);
-        this.from = from;
-        this.to = to;
-        this.hasTime = true;
+        this.startDateTime = startDateTime;
+        this.endDateTime = endDateTime;
+        this.hasScheduledTimes = true;
     }
 
     /** Returns the event start used for chronological sorting.
@@ -47,7 +47,7 @@ public class Event extends Task {
      */
     @Override
     public Optional<LocalDateTime> getSortDate() {
-        return Optional.of(from);
+        return Optional.of(startDateTime);
     }
 
     /**
@@ -57,10 +57,10 @@ public class Event extends Task {
      */
     @Override
     public String toString() {
-        DateTimeFormatter format = hasTime ? DISPLAY_DATE_TIME_FORMAT : DISPLAY_DATE_FORMAT;
+        DateTimeFormatter format = hasScheduledTimes ? DISPLAY_DATE_TIME_FORMAT : DISPLAY_DATE_FORMAT;
         return "[E][" + getStatusIcon() + "] " + getDescription()
-                + " (from: " + from.format(format)
-                + " to: " + to.format(format) + ")";
+                + " (from: " + startDateTime.format(format)
+                + " to: " + endDateTime.format(format) + ")";
     }
 
     /**
@@ -70,8 +70,12 @@ public class Event extends Task {
      */
     @Override
     public String toStorageString() {
-        String storedFrom = hasTime ? from.toString() : from.toLocalDate().toString();
-        String storedTo = hasTime ? to.toString() : to.toLocalDate().toString();
+        String storedFrom = hasScheduledTimes
+                ? startDateTime.toString()
+                : startDateTime.toLocalDate().toString();
+        String storedTo = hasScheduledTimes
+                ? endDateTime.toString()
+                : endDateTime.toLocalDate().toString();
         return "E | " + getStatusValue() + " | " + getDescription()
                 + " | " + storedFrom + " | " + storedTo;
     }

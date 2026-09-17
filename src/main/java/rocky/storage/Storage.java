@@ -168,13 +168,14 @@ public class Storage {
         if (fields.length != 5 || fields[2].isEmpty()) {
             return null;
         }
-        ParsedDateTime from = parseDateTime(fields[3]);
-        ParsedDateTime to = parseDateTime(fields[4]);
-        if (from == null || to == null || from.hasTime != to.hasTime) {
+        ParsedDateTime startDateTime = parseDateTime(fields[3]);
+        ParsedDateTime endDateTime = parseDateTime(fields[4]);
+        if (startDateTime == null || endDateTime == null
+                || startDateTime.hasTime != endDateTime.hasTime) {
             return null;
         }
-        return from.hasTime ? new Event(fields[2], from.value, to.value)
-                : new Event(fields[2], from.value.toLocalDate(), to.value.toLocalDate());
+        return startDateTime.hasTime ? new Event(fields[2], startDateTime.value, endDateTime.value)
+                : new Event(fields[2], startDateTime.value.toLocalDate(), endDateTime.value.toLocalDate());
     }
 
     /** Restores the completion state encoded in a stored status field. */

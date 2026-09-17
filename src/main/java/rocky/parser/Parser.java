@@ -218,25 +218,27 @@ public class Parser {
      * @return the parsed command.
      */
     private Command parseEvent(String input) {
-        int fromIndex = input.indexOf(" /from ");
-        int toIndex = input.indexOf(" /to ");
-        if (fromIndex < 0 || toIndex < 0 || toIndex < fromIndex) {
+        int fromMarkerIndex = input.indexOf(" /from ");
+        int toMarkerIndex = input.indexOf(" /to ");
+        if (fromMarkerIndex < 0 || toMarkerIndex < 0 || toMarkerIndex < fromMarkerIndex) {
             return error("Use: event DESCRIPTION /from START /to END", false);
         }
-        String description = input.substring("event".length(), fromIndex).trim();
+        String description = input.substring("event".length(), fromMarkerIndex).trim();
         if (description.isEmpty()) {
             return missingDescription();
         }
-        ParsedDateTime from = parseDateTime(input.substring(fromIndex + " /from ".length(), toIndex).trim());
-        ParsedDateTime to = parseDateTime(input.substring(toIndex + " /to ".length()).trim());
-        if (from == null || to == null) {
+        ParsedDateTime startDateTime = parseDateTime(
+                input.substring(fromMarkerIndex + " /from ".length(), toMarkerIndex).trim());
+        ParsedDateTime endDateTime = parseDateTime(
+                input.substring(toMarkerIndex + " /to ".length()).trim());
+        if (startDateTime == null || endDateTime == null) {
             return dateError();
         }
-        if (from.hasTime != to.hasTime) {
+        if (startDateTime.hasTime != endDateTime.hasTime) {
             return error("Use the same date or date-time format for both event dates.", false);
         }
-        Task task = from.hasTime ? new Event(description, from.value, to.value)
-                : new Event(description, from.value.toLocalDate(), to.value.toLocalDate());
+        Task task = startDateTime.hasTime ? new Event(description, startDateTime.value, endDateTime.value)
+                : new Event(description, startDateTime.value.toLocalDate(), endDateTime.value.toLocalDate());
         return add(task);
     }
 
