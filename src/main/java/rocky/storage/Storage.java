@@ -55,11 +55,11 @@ public class Storage {
             try {
                 Files.move(temporaryFile, taskFile, StandardCopyOption.ATOMIC_MOVE,
                         StandardCopyOption.REPLACE_EXISTING);
-            } catch (AtomicMoveNotSupportedException e) {
+            } catch (AtomicMoveNotSupportedException exception) {
                 Files.move(temporaryFile, taskFile, StandardCopyOption.REPLACE_EXISTING);
             }
-        } catch (IOException | SecurityException e) {
-            System.out.println("Rocky cannot save to the file...: " + e.getMessage());
+        } catch (IOException | SecurityException exception) {
+            System.out.println("Rocky cannot save to the file...: " + exception.getMessage());
         } finally {
             if (temporaryFile != null) {
                 try {
@@ -92,8 +92,8 @@ public class Storage {
                     tasks.add(task);
                 }
             }
-        } catch (IOException | SecurityException e) {
-            System.out.println("Rocky cannot load from the file...: " + e.getMessage());
+        } catch (IOException | SecurityException exception) {
+            System.out.println("Rocky cannot load from the file...: " + exception.getMessage());
         }
         return tasks;
     }
@@ -200,11 +200,12 @@ public class Storage {
                 return new ParsedDateTime(LocalDateTime.parse(text, format), true);
             }
             return new ParsedDateTime(LocalDate.parse(text, INPUT_DATE_FORMAT).atStartOfDay(), false);
-        } catch (DateTimeParseException e) {
+        } catch (DateTimeParseException exception) {
             return null;
         }
     }
 
+    /** Holds a parsed date-time and whether its stored value included a time. */
     private static class ParsedDateTime {
         private final LocalDateTime value;
         private final boolean hasTime;

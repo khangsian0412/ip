@@ -257,7 +257,7 @@ public class Parser {
                 return new ParsedDateTime(LocalDateTime.parse(text, format), true);
             }
             return new ParsedDateTime(LocalDate.parse(text, INPUT_DATE_FORMAT).atStartOfDay(), false);
-        } catch (DateTimeParseException e) {
+        } catch (DateTimeParseException exception) {
             return null;
         }
     }
@@ -315,6 +315,7 @@ public class Parser {
         return new Command(CommandType.ERROR, null, null, message, showWithDivider);
     }
 
+    /** Holds a parsed date-time and whether its input included a time. */
     private static class ParsedDateTime {
         private final LocalDateTime value;
         private final boolean hasTime;

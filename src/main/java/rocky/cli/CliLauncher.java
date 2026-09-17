@@ -74,7 +74,7 @@ public class CliLauncher {
             } else {
                 ui.showTaskNotFound();
             }
-        } catch (NumberFormatException e) {
+        } catch (NumberFormatException exception) {
             ui.showInvalidTaskNumber(command);
         }
     }
@@ -92,7 +92,7 @@ public class CliLauncher {
             } else {
                 ui.showTaskNotFound();
             }
-        } catch (NumberFormatException e) {
+        } catch (NumberFormatException exception) {
             ui.showInvalidTaskNumber("delete");
         }
     }
